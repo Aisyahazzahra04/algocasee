@@ -1,0 +1,153 @@
+{
+  "id": "case_01",
+  "title": "Penataan Taman Sekolah",
+  "difficulty": "Easy",
+
+  "briefing": {
+    "description": "Taman kecil di depan gedung sekolah sedang ingin dirapikan. Bagian taman yang akan ditanami rumput berbentuk persegi panjang. Sebelum membeli rumput, sekolah perlu mengetahui luas area taman yang harus ditutup. Panjang taman adalah 12 meter dan lebarnya 8 meter.",
+
+    "mission": "Tentukan luas taman yang perlu ditanami rumput.",
+
+    "rules": [
+      "Taman berbentuk persegi panjang.",
+      "Panjang taman adalah 12 meter.",
+      "Lebar taman adalah 8 meter."
+    ],
+
+    "facts": [
+      {
+        "label": "Panjang",
+        "value": "12 meter"
+      },
+      {
+        "label": "Lebar",
+        "value": "8 meter"
+      },
+      {
+        "label": "Bentuk",
+        "value": "Persegi panjang"
+      }
+    ]
+  },
+
+  "problem_analysis": {
+    "question": "Apa masalah utama yang harus diselesaikan?",
+
+    "options": [
+      "Menentukan luas taman yang akan ditanami rumput.",
+      "Menentukan warna rumput yang akan digunakan.",
+      "Menentukan jumlah siswa yang akan merawat taman.",
+      "Menentukan waktu untuk membeli rumput."
+    ],
+
+    "correct_answer": 0,
+
+    "feedback_correct": "Benar. Masalah utama pada kasus ini adalah menentukan luas area taman.",
+
+    "feedback_wrong": "Coba perhatikan kembali tujuan sekolah. Apa informasi yang sebenarnya ingin diketahui?"
+  },
+
+  "information_identification": {
+    "question": "Informasi mana yang diperlukan untuk menentukan luas taman?",
+
+    "information": [
+      {
+        "text": "Panjang taman 12 meter.",
+        "relevant": true
+      },
+      {
+        "text": "Lebar taman 8 meter.",
+        "relevant": true
+      },
+      {
+        "text": "Taman akan ditanami rumput.",
+        "relevant": false
+      },
+      {
+        "text": "Taman berada di depan gedung sekolah.",
+        "relevant": false
+      }
+    ]
+  },
+
+  "input_output_rules": {
+
+    "input": {
+      "question": "Data apa yang dibutuhkan untuk menghitung luas taman?",
+
+      "options": [
+        "Panjang dan lebar taman",
+        "Luas dan keliling taman",
+        "Jumlah siswa yang merawat taman",
+        "Lokasi taman"
+      ],
+
+      "correct_answer": 0
+    },
+
+    "output": {
+      "question": "Hasil apa yang harus diperoleh dari proses penyelesaian masalah?",
+
+      "options": [
+        "Panjang taman",
+        "Lebar taman",
+        "Luas taman",
+        "Bentuk taman"
+      ],
+
+      "correct_answer": 2
+    },
+
+    "rules": {
+      "question": "Pilih semua aturan yang digunakan untuk menyelesaikan kasus ini.",
+
+      "options": [
+        "Luas persegi panjang = panjang × lebar",
+        "Panjang taman adalah 12 meter",
+        "Lebar taman adalah 8 meter",
+        "Luas persegi panjang = panjang + lebar"
+      ],
+
+      "correct_answers": [
+        0,
+        1,
+        2
+      ]
+    }
+  },
+
+  "logic_builder": {
+    "available_blocks": [
+      "START",
+      "INPUT",
+      "PROCESS",
+      "OUTPUT",
+      "END"
+    ],
+
+    "expected_logic": [
+      "START",
+      "INPUT panjang",
+      "INPUT lebar",
+      "PROCESS luas = panjang × lebar",
+      "OUTPUT luas",
+      "END"
+    ]
+  },
+
+  "test_cases": [
+    {
+      "input": {
+        "panjang": 12,
+        "lebar": 8
+      },
+      "expected_result": 96
+    }
+  ],
+
+  "feedback": {
+    "correct": "Mantap! Algoritmamu menghasilkan luas taman sebesar 96 m². Kamu berhasil menyelesaikan Case 01.",
+
+    "wrong": "Hasilnya belum sesuai. Coba periksa kembali urutan INPUT dan PROCESS pada Logic Builder."
+  }
+}
