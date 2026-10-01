@@ -1,8 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+
 import '../main.dart';
 import '../widgets/app_logo.dart';
+import '../services/database_service.dart';
+
 import 'identity_screen.dart';
+import 'app_shell.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -16,24 +20,49 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
 
-    // Timer untuk menentukan lama tampilan splash screen
+    // Splash tetap tampil selama 3 detik
     Timer(const Duration(seconds: 3), () {
       if (!mounted) return;
 
-      // Setelah 3 detik → masuk ke Identitas Pengguna
+      checkUser();
+    });
+  }
+
+  // ============================================================
+  // CEK USER DI DATABASE
+  // ============================================================
+
+  Future<void> checkUser() async {
+    final user = await DatabaseService.instance.getUser();
+
+    if (!mounted) return;
+
+    if (user != null) {
+      // USER SUDAH ADA
+      // Langsung masuk ke aplikasi
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => const UserIdentityScreen(), 
+          builder: (_) => const AppShell(),
         ),
       );
-    });
+    } else {
+      // USER BELUM ADA
+      // Masuk ke halaman identitas
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const UserIdentityScreen(),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: lightGrey,
+
       body: SafeArea(
         child: Center(
           child: Column(

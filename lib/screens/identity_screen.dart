@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+
 import '../main.dart';
 import '../widgets/app_buttons.dart';
+import '../services/database_service.dart';
+import '../models/user_model.dart';
 import 'tutorial_screen.dart';
 
 class UserIdentityScreen extends StatefulWidget {
@@ -11,7 +14,6 @@ class UserIdentityScreen extends StatefulWidget {
 }
 
 class _UserIdentityScreenState extends State<UserIdentityScreen> {
-  // Controller untuk mengambil isi nama dari TextField
   final controller = TextEditingController();
 
   @override
@@ -20,8 +22,31 @@ class _UserIdentityScreenState extends State<UserIdentityScreen> {
     super.dispose();
   }
 
-  void start() {
-    // Setelah mengisi nama → masuk ke tutorial
+  Future<void> start() async {
+    final name = controller.text.trim();
+
+    if (name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Silakan masukkan nama terlebih dahulu.',
+          ),
+        ),
+      );
+      return;
+    }
+
+    // Membuat object user
+    final user = UserModel(
+      name: name,
+    );
+
+    // Menyimpan user ke SQLite
+    await DatabaseService.instance.insertUser(user);
+
+    if (!mounted) return;
+
+    // Setelah berhasil disimpan → masuk tutorial
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -34,14 +59,18 @@ class _UserIdentityScreenState extends State<UserIdentityScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: lightGrey,
+
       appBar: AppBar(
         backgroundColor: lightGrey,
         elevation: 0,
       ),
+
       body: Padding(
         padding: const EdgeInsets.all(24),
+
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+
           children: [
             const Spacer(),
 
@@ -50,10 +79,12 @@ class _UserIdentityScreenState extends State<UserIdentityScreen> {
               child: Container(
                 height: 80,
                 width: 80,
+
                 decoration: BoxDecoration(
                   color: navy,
                   borderRadius: BorderRadius.circular(24),
                 ),
+
                 child: const Icon(
                   Icons.person_outline,
                   color: Colors.white,
@@ -69,6 +100,7 @@ class _UserIdentityScreenState extends State<UserIdentityScreen> {
               child: Text(
                 'Siap menjelajahi case?',
                 textAlign: TextAlign.center,
+
                 style: TextStyle(
                   fontSize: 27,
                   fontWeight: FontWeight.bold,
@@ -84,6 +116,7 @@ class _UserIdentityScreenState extends State<UserIdentityScreen> {
               child: Text(
                 'Masukkan nama kamu untuk memulai.',
                 textAlign: TextAlign.center,
+
                 style: TextStyle(
                   color: textGrey,
                   height: 1.5,
@@ -96,25 +129,31 @@ class _UserIdentityScreenState extends State<UserIdentityScreen> {
             // INPUT NAMA
             TextField(
               controller: controller,
+
               decoration: InputDecoration(
                 labelText: 'Nama kamu',
+
                 prefixIcon: const Icon(
                   Icons.person_outline,
                 ),
+
                 filled: true,
                 fillColor: Colors.white,
+
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: const BorderSide(
                     color: borderGrey,
                   ),
                 ),
+
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: const BorderSide(
                     color: borderGrey,
                   ),
                 ),
+
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: const BorderSide(
@@ -127,7 +166,7 @@ class _UserIdentityScreenState extends State<UserIdentityScreen> {
 
             const SizedBox(height: 18),
 
-            // BUTTON UNTUK MEMULAI
+            // BUTTON
             PrimaryButton(
               text: 'Mulai Belajar',
               icon: Icons.arrow_forward,

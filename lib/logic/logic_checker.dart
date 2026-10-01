@@ -322,7 +322,7 @@ class LogicChecker {
     return text
         .trim()
         .toLowerCase()
-        .replaceAll('×', 'x')
+        .replaceAll('×', 'x',)
         .replaceAll('÷', '/')
         .replaceAll(RegExp(r'\s+'), ' ');
   }

@@ -71,48 +71,37 @@
   },
 
   "input_output_rules": {
-
     "input": {
       "question": "Data apa yang dibutuhkan untuk menghitung luas taman?",
-
       "options": [
         "Panjang dan lebar taman",
         "Luas dan keliling taman",
         "Jumlah siswa yang merawat taman",
         "Lokasi taman"
       ],
-
       "correct_answer": 0
     },
 
     "output": {
       "question": "Hasil apa yang harus diperoleh dari proses penyelesaian masalah?",
-
       "options": [
         "Panjang taman",
         "Lebar taman",
         "Luas taman",
         "Bentuk taman"
       ],
-
       "correct_answer": 2
     },
 
     "rules": {
       "question": "Pilih semua aturan yang digunakan untuk menyelesaikan kasus ini.",
-
       "options": [
         "Luas persegi panjang = panjang × lebar",
         "Panjang taman adalah 12 meter",
         "Lebar taman adalah 8 meter",
-        "Luas persegi panjang = panjang + lebar"
+        "Luas taman = panjang + lebar"
       ],
-
-      "correct_answers": [
-        0,
-        1,
-        2
-      ]
+      "correct_answers": [0, 1, 2]
     }
   },
 
@@ -124,7 +113,6 @@
       "OUTPUT",
       "END"
     ],
-
     "expected_logic": [
       "START",
       "INPUT panjang",
