@@ -27,9 +27,11 @@ class AlgoCaseApp extends StatelessWidget {
       title: 'AlgoCase',
       theme: ThemeData(
         useMaterial3: true,
-        scaffoldBackgroundColor: Colors.white,
         fontFamily: 'Inter',
-        colorScheme: ColorScheme.fromSeed(seedColor: navy),
+        scaffoldBackgroundColor: Colors.white,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: navy,
+        ),
       ),
       home: const SplashScreen(),
     );

@@ -5,7 +5,6 @@ import '../models/case_model.dart';
 import 'package:algocasee/logic/logic_checker.dart' as logic_checker;
 
 enum _LogicType {
-  declare,
   input,
   output,
   process,
@@ -87,10 +86,6 @@ List<String> _getUserLogic() {
 
   for (final node in _nodes) {
     switch (node.type) {
-      case _LogicType.declare:
-        logic.add('DECLARE ${node.text}');
-        break;
-
       case _LogicType.input:
         logic.add('INPUT ${node.text}');
         break;
@@ -501,15 +496,6 @@ List<String> _getUserLogic() {
     required VoidCallback onDelete,
   }) {
     switch (node.type) {
-      case _LogicType.declare:
-        return _RectangleNode(
-          title: 'DECLARE',
-          text: node.text,
-          color: const Color(0xFFFFF4C7),
-          onTap: onTap,
-          onDelete: onDelete,
-        );
-
       case _LogicType.input:
         return _ParallelogramNode(
           title: 'INPUT',
@@ -651,17 +637,6 @@ List<String> _getUserLogic() {
                 ),
 
                 const SizedBox(height: 16),
-
-                _AddMenuItem(
-                  title: 'DECLARE',
-                  subtitle: 'Deklarasi variabel',
-                  color: const Color(0xFFFFF4C7),
-                  onTap: () {
-                    Navigator.pop(context);
-                    onSelected(_LogicType.declare);
-                  },
-                ),
-
                 _AddMenuItem(
                   title: 'INPUT',
                   subtitle: 'Menerima data',
@@ -726,13 +701,6 @@ Future<String?> _showNodeDialog(
   String suggestion;
 
   switch (type) {
-    case _LogicType.declare:
-      title = 'Tambah DECLARE';
-      hint = 'Contoh: Integer panjang';
-      suggestion =
-          'Gunakan untuk menentukan variabel yang diperlukan.';
-      break;
-
     case _LogicType.input:
       title = 'Tambah INPUT';
       hint = 'Contoh: panjang';

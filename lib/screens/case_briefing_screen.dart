@@ -142,7 +142,7 @@ class CaseBriefingScreen extends StatelessWidget {
                     // ==================================================
                     const _SectionTitle(
                       icon: Icons.menu_book_outlined,
-                      title: 'CERITANYA',
+                      title: 'PAHAMI DAN BACA SECARA SEKSAMA STUDI KASUS DIBAWAH',
                     ),
 
                     const SizedBox(height: 10),

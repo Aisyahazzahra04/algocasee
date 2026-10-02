@@ -134,7 +134,7 @@
   ],
 
   "feedback": {
-    "correct": "Mantap! Algoritmamu menghasilkan luas taman sebesar 96 m². Kamu berhasil menyelesaikan Case 01.",
+    "correct": "Bagus! Algoritmamu menghasilkan ",
 
     "wrong": "Hasilnya belum sesuai. Coba periksa kembali urutan INPUT dan PROCESS pada Logic Builder."
   }
