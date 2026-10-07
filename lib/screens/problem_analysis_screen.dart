@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../main.dart';
 import '../models/case_model.dart';
 import 'information_identification_screen.dart';
+import 'cases_screen.dart';
 
 class ProblemAnalysisScreen extends StatefulWidget {
   final CaseModel caseData;
@@ -107,7 +108,23 @@ class _ProblemAnalysisScreenState
                       ],
                     ),
                   ),
-                  const SizedBox(width: 48),
+                    IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const Scaffold(
+                            body: CasesScreen(),
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.grid_view_rounded,
+                      size: 19,
+                    ),
+                    color: navy,
+                  ),
                 ],
               ),
             ),

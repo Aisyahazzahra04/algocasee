@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../main.dart';
 import '../models/case_model.dart';
 import 'logic_builder_screen.dart';
+import 'cases_screen.dart';
 
 class InputOutputRulesScreen extends StatefulWidget {
   final CaseModel caseData;
@@ -132,7 +133,23 @@ class _InputOutputRulesScreenState
                         ),
                       ),
 
-                      const SizedBox(width: 32),
+                      IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => Scaffold(
+                              body: CasesScreen(),
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(
+                        Icons.grid_view_rounded,
+                        size: 19,
+                      ),
+                      color: navy,
+                    ),
                     ],
                   ),
 

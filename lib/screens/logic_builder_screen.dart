@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'cases_screen.dart';
 import '../main.dart';
 import '../models/case_model.dart';
 import 'package:algocasee/logic/logic_checker.dart' as logic_checker;
@@ -250,7 +250,23 @@ List<String> _getUserLogic() {
             ),
           ),
 
-          const SizedBox(width: 32),
+          IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const Scaffold(
+                  body: CasesScreen(),
+                ),
+              ),
+            );
+          },
+          icon: const Icon(
+            Icons.grid_view_rounded,
+            size: 19,
+          ),
+          color: navy,
+        ),
         ],
       ),
     );
