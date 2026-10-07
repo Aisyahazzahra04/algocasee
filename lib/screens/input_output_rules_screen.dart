@@ -139,40 +139,69 @@ class _InputOutputRulesScreenState
                   const SizedBox(height: 18),
 
                   // ==================================================
-                  // STEP INDICATOR
+                  // PROGRESS 5 TAHAP
                   // ==================================================
-
-                  Row(
-                    children: [
-                      const _StepCircle(
-                        number: '1',
-                        active: true,
-                      ),
-
-                      Expanded(
-                        child: Container(
-                          height: 3,
-                          color: navy,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 0,
+                      vertical: 12,
+                    ),
+                    child: Row(
+                      children: [
+                        _ProgressNumber(
+                          number: '1',
+                          active: true,
                         ),
-                      ),
 
-                      const _StepCircle(
-                        number: '2',
-                        active: true,
-                      ),
-
-                      Expanded(
-                        child: Container(
-                          height: 3,
-                          color: navy,
+                        Expanded(
+                          child: Container(
+                            height: 3,
+                            color: navy,
+                          ),
                         ),
-                      ),
 
-                      const _StepCircle(
-                        number: '3',
-                        active: true,
-                      ),
-                    ],
+                        _ProgressNumber(
+                          number: '2',
+                          active: true,
+                        ),
+
+                        Expanded(
+                          child: Container(
+                            height: 3,
+                            color: navy,
+                          ),
+                        ),
+
+                        _ProgressNumber(
+                          number: '3',
+                          active: true,
+                        ),
+
+                        Expanded(
+                          child: Container(
+                            height: 3,
+                            color: borderGrey,
+                          ),
+                        ),
+
+                        _ProgressNumber(
+                          number: '4',
+                          active: false,
+                        ),
+
+                        Expanded(
+                          child: Container(
+                            height: 3,
+                            color: borderGrey,
+                          ),
+                        ),
+
+                        _ProgressNumber(
+                          number: '5',
+                          active: false,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -506,14 +535,14 @@ class _InputOutputRulesScreenState
 }
 
 // ============================================================
-// STEP CIRCLE
+// PROGRESS NUMBER
 // ============================================================
 
-class _StepCircle extends StatelessWidget {
+class _ProgressNumber extends StatelessWidget {
   final String number;
   final bool active;
 
-  const _StepCircle({
+  const _ProgressNumber({
     required this.number,
     required this.active,
   });
@@ -525,7 +554,7 @@ class _StepCircle extends StatelessWidget {
       height: 30,
       decoration: BoxDecoration(
         color: active ? navy : Colors.white,
-        shape: BoxShape.circle,
+        borderRadius: BorderRadius.circular(6),
         border: Border.all(
           color: active ? navy : borderGrey,
           width: 1,

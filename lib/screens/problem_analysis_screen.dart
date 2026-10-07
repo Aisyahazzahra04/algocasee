@@ -113,7 +113,7 @@ class _ProblemAnalysisScreenState
             ),
 
             // ==================================================
-            // PROGRESS
+            // PROGRESS 5 TAHAP
             // ==================================================
             Padding(
               padding: const EdgeInsets.symmetric(
@@ -146,6 +146,28 @@ class _ProblemAnalysisScreenState
                     number: '3',
                     active: false,
                   ),
+                  Expanded(
+                    child: Container(
+                      height: 3,
+                      color: borderGrey,
+                    )
+                  ),
+                  _ProgressNumber(
+                    number: '4',
+                    active: false,
+                  ),
+
+                  Expanded(
+                    child: Container(
+                      height: 3,
+                      color: borderGrey,
+                    )
+                  ),
+                  _ProgressNumber(
+                    number: '5',
+                    active: false,
+                  ),
+
                 ],
               ),
             ),

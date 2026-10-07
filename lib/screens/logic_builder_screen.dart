@@ -256,64 +256,78 @@ List<String> _getUserLogic() {
     );
   }
 
-  // ============================================================
-  // PROGRESS
-  // ============================================================
 
-  Widget _buildProgress() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        20,
-        18,
-        20,
-        0,
-      ),
-      child: Row(
-        children: [
-          const _StepCircle(
-            number: '1',
-            active: true,
-          ),
+// ============================================================
+// PROGRESS
+// ============================================================
 
-          Expanded(
-            child: Container(
-              height: 3,
-              color: navy,
-            ),
-          ),
+Widget _buildProgress() {
+  return Padding(
+    padding: const EdgeInsets.fromLTRB(
+      20,
+      18,
+      20,
+      0,
+    ),
+    child: Row(
+      children: [
+        const _ProgressNumber(
+          number: '1',
+          active: true,
+        ),
 
-          const _StepCircle(
-            number: '2',
-            active: true,
+        Expanded(
+          child: Container(
+            height: 3,
+            color: navy,
           ),
+        ),
 
-          Expanded(
-            child: Container(
-              height: 3,
-              color: navy,
-            ),
-          ),
+        const _ProgressNumber(
+          number: '2',
+          active: true,
+        ),
 
-          const _StepCircle(
-            number: '3',
-            active: true,
+        Expanded(
+          child: Container(
+            height: 3,
+            color: navy,
           ),
+        ),
 
-          Expanded(
-            child: Container(
-              height: 3,
-              color: navy,
-            ),
-          ),
+        const _ProgressNumber(
+          number: '3',
+          active: true,
+        ),
 
-          const _StepCircle(
-            number: '4',
-            active: true,
+        Expanded(
+          child: Container(
+            height: 3,
+            color: navy,
           ),
-        ],
-      ),
-    );
-  }
+        ),
+
+        const _ProgressNumber(
+          number: '4',
+          active: true,
+        ),
+
+        Expanded(
+          child: Container(
+            height: 3,
+            color: borderGrey,
+          ),
+        ),
+
+        const _ProgressNumber(
+          number: '5',
+          active: false,
+        ),
+      ],
+    ),
+  );
+}
+  
 
   // ============================================================
   // STEP HINT
@@ -907,7 +921,7 @@ Future<String?> _showNodeDialog(
               ),
             ),
             child: const Text(
-              'CHECK',
+              'SIMPAN',
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
@@ -1968,15 +1982,14 @@ class _HintRow
 }
 
 // ============================================================
-// STEP CIRCLE
+// PROGRESS NUMBER
 // ============================================================
 
-class _StepCircle
-    extends StatelessWidget {
+class _ProgressNumber extends StatelessWidget {
   final String number;
   final bool active;
 
-  const _StepCircle({
+  const _ProgressNumber({
     required this.number,
     required this.active,
   });
@@ -1987,14 +2000,10 @@ class _StepCircle
       width: 30,
       height: 30,
       decoration: BoxDecoration(
-        color: active
-            ? navy
-            : Colors.white,
-        shape: BoxShape.circle,
+        color: active ? navy : Colors.white,
+        borderRadius: BorderRadius.circular(6),
         border: Border.all(
-          color: active
-              ? navy
-              : borderGrey,
+          color: active ? navy : borderGrey,
         ),
       ),
       alignment: Alignment.center,
@@ -2002,11 +2011,8 @@ class _StepCircle
         number,
         style: TextStyle(
           fontSize: 11,
-          fontWeight:
-              FontWeight.w800,
-          color: active
-              ? Colors.white
-              : textGrey,
+          fontWeight: FontWeight.w800,
+          color: active ? Colors.white : textGrey,
         ),
       ),
     );
