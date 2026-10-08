@@ -271,7 +271,7 @@ class CaseBriefingScreen extends StatelessWidget {
                     // ==================================================
                     const _SectionTitle(
                       icon: Icons.flag_outlined,
-                      title: 'MISIMU',
+                      title: 'MISI',
                     ),
 
                     const SizedBox(height: 10),
