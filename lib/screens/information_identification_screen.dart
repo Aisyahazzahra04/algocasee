@@ -4,14 +4,17 @@ import '../main.dart';
 import '../models/case_model.dart';
 import 'input_output_rules_screen.dart';
 import 'cases_screen.dart';
+import 'problem_analysis_screen.dart';
 
 class InformationIdentificationScreen
     extends StatefulWidget {
   final CaseModel caseData;
+  final int maxReachedStep;
 
   const InformationIdentificationScreen({
     super.key,
     required this.caseData,
+    this.maxReachedStep = 2,
   });
 
   @override
@@ -59,11 +62,119 @@ class _InformationIdentificationScreenState
       context,
       MaterialPageRoute(
         builder: (_) => InputOutputRulesScreen(
-          caseData: widget.caseData,
-        ),
+        caseData: widget.caseData,
+        maxReachedStep:
+            widget.maxReachedStep < 3
+                ? 3
+                : widget.maxReachedStep,
+      ),
       ),
     );
   }
+
+  Widget _buildProgress() {
+  return Padding(
+    padding: const EdgeInsets.symmetric(
+      horizontal: 20,
+      vertical: 12,
+    ),
+    child: Row(
+      children: [
+        _ProgressNumber(
+          number: '1',
+          active: false,
+          enabled: true,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ProblemAnalysisScreen(
+                  caseData: widget.caseData,
+                  maxReachedStep: widget.maxReachedStep,
+                ),
+              ),
+            );
+          },
+        ),
+
+        Expanded(
+          child: Container(
+            height: 3,
+            color: navy,
+          ),
+        ),
+
+        _ProgressNumber(
+          number: '2',
+          active: true,
+          enabled: false,
+          onTap: null,
+        ),
+
+        Expanded(
+          child: Container(
+            height: 3,
+            color: widget.maxReachedStep >= 3
+                ? navy
+                : borderGrey,
+          ),
+        ),
+
+        _ProgressNumber(
+          number: '3',
+          active: false,
+          enabled: widget.maxReachedStep >= 3,
+          onTap: widget.maxReachedStep >= 3
+              ? () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => InputOutputRulesScreen(
+                        caseData: widget.caseData,
+                        maxReachedStep:
+                            widget.maxReachedStep,
+                      ),
+                    ),
+                  );
+                }
+              : null,
+        ),
+
+        Expanded(
+          child: Container(
+            height: 3,
+            color: widget.maxReachedStep >= 4
+                ? navy
+                : borderGrey,
+          ),
+        ),
+
+        _ProgressNumber(
+          number: '4',
+          active: false,
+          enabled: widget.maxReachedStep >= 4,
+          onTap: null,
+        ),
+
+        Expanded(
+          child: Container(
+            height: 3,
+            color: widget.maxReachedStep >= 5
+                ? navy
+                : borderGrey,
+          ),
+        ),
+
+        _ProgressNumber(
+          number: '5',
+          active: false,
+          enabled: widget.maxReachedStep >= 5,
+          onTap: null,
+        ),
+      ],
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -149,66 +260,7 @@ class _InformationIdentificationScreenState
             // ==================================================
             // PROGRESS
             // ==================================================
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 12,
-              ),
-              child: Row(
-                children: [
-                  _ProgressNumber(
-                    number: '1',
-                    active: true,
-                  ),
-
-                  Expanded(
-                    child: Container(
-                      height: 3,
-                      color: navy,
-                    ),
-                  ),
-
-                  _ProgressNumber(
-                    number: '2',
-                    active: true,
-                  ),
-
-                  Expanded(
-                    child: Container(
-                      height: 3,
-                      color: borderGrey,
-                    ),
-                  ),
-
-                  _ProgressNumber(
-                    number: '3',
-                    active: false,
-                  ),
-                                    Expanded(
-                    child: Container(
-                      height: 3,
-                      color: borderGrey,
-                    )
-                  ),
-                  _ProgressNumber(
-                    number: '4',
-                    active: false,
-                  ),
-
-                  Expanded(
-                    child: Container(
-                      height: 3,
-                      color: borderGrey,
-                    )
-                  ),
-                  _ProgressNumber(
-                    number: '5',
-                    active: false,
-                  ),
-
-                ],
-              ),
-            ),
+            _buildProgress(),
 
             // ==================================================
             // CONTENT
@@ -469,31 +521,45 @@ class _InformationIdentificationScreenState
 class _ProgressNumber extends StatelessWidget {
   final String number;
   final bool active;
+  final bool enabled;
+  final VoidCallback? onTap;
 
   const _ProgressNumber({
     required this.number,
     required this.active,
+    required this.enabled,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 30,
-      height: 30,
-      decoration: BoxDecoration(
-        color: active ? navy : Colors.white,
-        border: Border.all(
-          color: active ? navy : borderGrey,
+    return InkWell(
+      onTap: enabled ? onTap : null,
+      borderRadius: BorderRadius.circular(9),
+      child: Container(
+        width: 30,
+        height: 30,
+        decoration: BoxDecoration(
+          color: active || enabled
+              ? navy
+              : Colors.white,
+          border: Border.all(
+            color: active || enabled
+                ? navy
+                : borderGrey,
+          ),
+          borderRadius: BorderRadius.circular(9),
         ),
-        borderRadius: BorderRadius.circular(9),
-      ),
-      child: Center(
-        child: Text(
-          number,
-          style: TextStyle(
-            color: active ? Colors.white : textGrey,
-            fontSize: 12,
-            fontWeight: FontWeight.w800,
+        child: Center(
+          child: Text(
+            number,
+            style: TextStyle(
+              color: active || enabled
+                  ? Colors.white
+                  : textGrey,
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+            ),
           ),
         ),
       ),

@@ -7,10 +7,12 @@ import 'cases_screen.dart';
 
 class ProblemAnalysisScreen extends StatefulWidget {
   final CaseModel caseData;
+  final int maxReachedStep;
 
   const ProblemAnalysisScreen({
     super.key,
     required this.caseData,
+    this.maxReachedStep = 1,
   });
 
   @override
@@ -49,10 +51,114 @@ class _ProblemAnalysisScreenState
         builder: (_) =>
             InformationIdentificationScreen(
           caseData: widget.caseData,
+          maxReachedStep:
+              widget.maxReachedStep < 2
+                  ? 2
+                  : widget.maxReachedStep,
         ),
       ),
     );
   }
+
+  // ==================================================
+  // PROGRESS 5 TAHAP
+  // ==================================================
+  Widget _buildProgress() {
+  return Padding(
+    padding: const EdgeInsets.symmetric(
+      horizontal: 20,
+      vertical: 12,
+    ),
+    child: Row(
+      children: [
+        _ProgressNumber(
+          number: '1',
+          active: true,
+          enabled: false,
+          onTap: null,
+        ),
+
+        Expanded(
+          child: Container(
+            height: 3,
+            color: widget.maxReachedStep >= 2
+                ? navy
+                : borderGrey,
+          ),
+        ),
+
+        _ProgressNumber(
+          number: '2',
+          active: false,
+          enabled: widget.maxReachedStep >= 2,
+          onTap: widget.maxReachedStep >= 2
+              ? () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          InformationIdentificationScreen(
+                        caseData: widget.caseData,
+                        maxReachedStep:
+                            widget.maxReachedStep,
+                      ),
+                    ),
+                  );
+                }
+              : null,
+        ),
+
+        Expanded(
+          child: Container(
+            height: 3,
+            color: widget.maxReachedStep >= 3
+                ? navy
+                : borderGrey,
+          ),
+        ),
+
+        _ProgressNumber(
+          number: '3',
+          active: false,
+          enabled: widget.maxReachedStep >= 3,
+          onTap: null,
+        ),
+
+        Expanded(
+          child: Container(
+            height: 3,
+            color: widget.maxReachedStep >= 4
+                ? navy
+                : borderGrey,
+          ),
+        ),
+
+        _ProgressNumber(
+          number: '4',
+          active: false,
+          enabled: widget.maxReachedStep >= 4,
+          onTap: null,
+        ),
+
+        Expanded(
+          child: Container(
+            height: 3,
+            color: widget.maxReachedStep >= 5
+                ? navy
+                : borderGrey,
+          ),
+        ),
+
+        _ProgressNumber(
+          number: '5',
+          active: false,
+          enabled: widget.maxReachedStep >= 5,
+          onTap: null,
+        ),
+      ],
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -132,62 +238,7 @@ class _ProblemAnalysisScreenState
             // ==================================================
             // PROGRESS 5 TAHAP
             // ==================================================
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 12,
-              ),
-              child: Row(
-                children: [
-                  _ProgressNumber(
-                    number: '1',
-                    active: true,
-                  ),
-                  Expanded(
-                    child: Container(
-                      height: 3,
-                      color: navy,
-                    ),
-                  ),
-                  _ProgressNumber(
-                    number: '2',
-                    active: true,
-                  ),
-                  Expanded(
-                    child: Container(
-                      height: 3,
-                      color: borderGrey,
-                    ),
-                  ),
-                  _ProgressNumber(
-                    number: '3',
-                    active: false,
-                  ),
-                  Expanded(
-                    child: Container(
-                      height: 3,
-                      color: borderGrey,
-                    )
-                  ),
-                  _ProgressNumber(
-                    number: '4',
-                    active: false,
-                  ),
-
-                  Expanded(
-                    child: Container(
-                      height: 3,
-                      color: borderGrey,
-                    )
-                  ),
-                  _ProgressNumber(
-                    number: '5',
-                    active: false,
-                  ),
-
-                ],
-              ),
-            ),
+            _buildProgress(),
 
             // ==================================================
             // CONTENT
@@ -417,33 +468,45 @@ class _ProblemAnalysisScreenState
 class _ProgressNumber extends StatelessWidget {
   final String number;
   final bool active;
+  final bool enabled;
+  final VoidCallback? onTap;
 
   const _ProgressNumber({
     required this.number,
     required this.active,
+    required this.enabled,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 30,
-      height: 30,
-      decoration: BoxDecoration(
-        color: active ? navy : Colors.white,
-        border: Border.all(
-          color: active ? navy : borderGrey,
+    return InkWell(
+      onTap: enabled ? onTap : null,
+      borderRadius: BorderRadius.circular(9),
+      child: Container(
+        width: 30,
+        height: 30,
+        decoration: BoxDecoration(
+          color: active || enabled
+              ? navy
+              : Colors.white,
+          border: Border.all(
+            color: active || enabled
+                ? navy
+                : borderGrey,
+          ),
+          borderRadius: BorderRadius.circular(9),
         ),
-        borderRadius:
-            BorderRadius.circular(9),
-      ),
-      child: Center(
-        child: Text(
-          number,
-          style: TextStyle(
-            color:
-                active ? Colors.white : textGrey,
-            fontSize: 12,
-            fontWeight: FontWeight.w800,
+        child: Center(
+          child: Text(
+            number,
+            style: TextStyle(
+              color: active || enabled
+                  ? Colors.white
+                  : textGrey,
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+            ),
           ),
         ),
       ),

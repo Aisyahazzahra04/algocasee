@@ -4,6 +4,10 @@ import '../main.dart';
 import '../models/case_model.dart';
 import 'package:algocasee/logic/logic_checker.dart' as logic_checker;
 
+import 'problem_analysis_screen.dart';
+import 'information_identification_screen.dart';
+import 'input_output_rules_screen.dart';
+
 enum _LogicType {
   input,
   output,
@@ -29,10 +33,12 @@ class _FlowNode {
 
 class LogicBuilderScreen extends StatefulWidget {
   final CaseModel caseData;
+  final int maxReachedStep;
 
   const LogicBuilderScreen({
     super.key,
     required this.caseData,
+    this.maxReachedStep = 4,
   });
 
   @override
@@ -273,76 +279,130 @@ List<String> _getUserLogic() {
   }
 
 
-// ============================================================
-// PROGRESS
-// ============================================================
+  // ============================================================
+  // PROGRESS
+  // ============================================================
 
-Widget _buildProgress() {
-  return Padding(
-    padding: const EdgeInsets.fromLTRB(
-      20,
-      18,
-      20,
-      0,
-    ),
-    child: Row(
-      children: [
-        const _ProgressNumber(
-          number: '1',
-          active: true,
-        ),
-
-        Expanded(
-          child: Container(
-            height: 3,
-            color: navy,
+  Widget _buildProgress() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        20,
+        18,
+        20,
+        0,
+      ),
+      child: Row(
+        children: [
+          _ProgressNumber(
+            number: '1',
+            active: false,
+            enabled: widget.maxReachedStep >= 1,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ProblemAnalysisScreen(
+                    caseData: widget.caseData,
+                    maxReachedStep: widget.maxReachedStep,
+                  ),
+                ),
+              );
+            },
           ),
-        ),
 
-        const _ProgressNumber(
-          number: '2',
-          active: true,
-        ),
-
-        Expanded(
-          child: Container(
-            height: 3,
-            color: navy,
+          Expanded(
+            child: Container(
+              height: 3,
+              color: widget.maxReachedStep >= 2
+                  ? navy
+                  : borderGrey,
+            ),
           ),
-        ),
 
-        const _ProgressNumber(
-          number: '3',
-          active: true,
-        ),
-
-        Expanded(
-          child: Container(
-            height: 3,
-            color: navy,
+          _ProgressNumber(
+            number: '2',
+            active: false,
+            enabled: widget.maxReachedStep >= 2,
+            onTap: widget.maxReachedStep >= 2
+                ? () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            InformationIdentificationScreen(
+                          caseData: widget.caseData,
+                          maxReachedStep:
+                              widget.maxReachedStep,
+                        ),
+                      ),
+                    );
+                  }
+                : null,
           ),
-        ),
 
-        const _ProgressNumber(
-          number: '4',
-          active: true,
-        ),
-
-        Expanded(
-          child: Container(
-            height: 3,
-            color: borderGrey,
+          Expanded(
+            child: Container(
+              height: 3,
+              color: widget.maxReachedStep >= 3
+                  ? navy
+                  : borderGrey,
+            ),
           ),
-        ),
 
-        const _ProgressNumber(
-          number: '5',
-          active: false,
-        ),
-      ],
-    ),
-  );
-}
+          _ProgressNumber(
+            number: '3',
+            active: false,
+            enabled: widget.maxReachedStep >= 3,
+            onTap: widget.maxReachedStep >= 3
+                ? () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            InputOutputRulesScreen(
+                          caseData: widget.caseData,
+                          maxReachedStep:
+                              widget.maxReachedStep,
+                        ),
+                      ),
+                    );
+                  }
+                : null,
+          ),
+
+          Expanded(
+            child: Container(
+              height: 3,
+              color: navy,
+            ),
+          ),
+
+          _ProgressNumber(
+            number: '4',
+            active: true,
+            enabled: false,
+            onTap: null,
+          ),
+
+          Expanded(
+            child: Container(
+              height: 3,
+              color: widget.maxReachedStep >= 5
+                  ? navy
+                  : borderGrey,
+            ),
+          ),
+
+          _ProgressNumber(
+            number: '5',
+            active: false,
+            enabled: widget.maxReachedStep >= 5,
+            onTap: null,
+          ),
+        ],
+      ),
+    );
+  }
   
 
   // ============================================================
@@ -1997,43 +2057,58 @@ class _HintRow
   }
 }
 
-// ============================================================
-// PROGRESS NUMBER
-// ============================================================
+  // ============================================================
+  // PROGRESS NUMBER
+  // ============================================================
 
-class _ProgressNumber extends StatelessWidget {
-  final String number;
-  final bool active;
+  class _ProgressNumber extends StatelessWidget {
+    final String number;
+    final bool active;
+    final bool enabled;
+    final VoidCallback? onTap;
 
-  const _ProgressNumber({
-    required this.number,
-    required this.active,
-  });
+    const _ProgressNumber({
+      required this.number,
+      required this.active,
+      required this.enabled,
+      required this.onTap,
+    });
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 30,
-      height: 30,
-      decoration: BoxDecoration(
-        color: active ? navy : Colors.white,
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(
-          color: active ? navy : borderGrey,
+    @override
+    Widget build(BuildContext context) {
+      return InkWell(
+        onTap: enabled ? onTap : null,
+        borderRadius: BorderRadius.circular(9),
+        child: Container(
+          width: 30,
+          height: 30,
+          decoration: BoxDecoration(
+            color: active || enabled
+                ? navy
+                : Colors.white,
+            border: Border.all(
+              color: active || enabled
+                  ? navy
+                  : borderGrey,
+            ),
+            borderRadius: BorderRadius.circular(9),
+          ),
+          child: Center(
+            child: Text(
+              number,
+              style: TextStyle(
+                color: active || enabled
+                    ? Colors.white
+                    : textGrey,
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
         ),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        number,
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w800,
-          color: active ? Colors.white : textGrey,
-        ),
-      ),
-    );
+      );
+    }
   }
-}
 
 // ============================================================
 // PARALLELOGRAM CLIPPER

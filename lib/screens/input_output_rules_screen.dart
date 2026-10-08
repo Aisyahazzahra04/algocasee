@@ -4,13 +4,17 @@ import '../main.dart';
 import '../models/case_model.dart';
 import 'logic_builder_screen.dart';
 import 'cases_screen.dart';
+import 'problem_analysis_screen.dart';
+import 'information_identification_screen.dart';
 
 class InputOutputRulesScreen extends StatefulWidget {
   final CaseModel caseData;
+  final int maxReachedStep;
 
   const InputOutputRulesScreen({
     super.key,
     required this.caseData,
+    this.maxReachedStep = 3,
   });
 
   @override
@@ -65,6 +69,107 @@ class _InputOutputRulesScreenState
         selectedRules.containsAll(correctIndexes);
   }
 
+  Widget _buildProgress() {
+  return Padding(
+    padding: const EdgeInsets.symmetric(
+      horizontal: 20,
+      vertical: 12,
+    ),
+    child: Row(
+      children: [
+        _ProgressNumber(
+          number: '1',
+          active: false,
+          enabled: true,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ProblemAnalysisScreen(
+                  caseData: widget.caseData,
+                  maxReachedStep: widget.maxReachedStep,
+                ),
+              ),
+            );
+          },
+        ),
+
+        Expanded(
+          child: Container(
+            height: 3,
+            color: navy,
+          ),
+        ),
+
+        _ProgressNumber(
+          number: '2',
+          active: false,
+          enabled: true,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) =>
+                    InformationIdentificationScreen(
+                  caseData: widget.caseData,
+                  maxReachedStep:
+                      widget.maxReachedStep,
+                ),
+              ),
+            );
+          },
+        ),
+
+        Expanded(
+          child: Container(
+            height: 3,
+            color: navy,
+          ),
+        ),
+
+        _ProgressNumber(
+          number: '3',
+          active: true,
+          enabled: false,
+          onTap: null,
+        ),
+
+        Expanded(
+          child: Container(
+            height: 3,
+            color: widget.maxReachedStep >= 4
+                ? navy
+                : borderGrey,
+          ),
+        ),
+
+        _ProgressNumber(
+          number: '4',
+          active: false,
+          enabled: widget.maxReachedStep >= 4,
+          onTap: null,
+        ),
+
+        Expanded(
+          child: Container(
+            height: 3,
+            color: widget.maxReachedStep >= 5
+                ? navy
+                : borderGrey,
+          ),
+        ),
+
+        _ProgressNumber(
+          number: '5',
+          active: false,
+          enabled: widget.maxReachedStep >= 5,
+          onTap: null,
+        ),
+      ],
+    ),
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     final data = widget.caseData.inputOutputRules;
@@ -74,155 +179,80 @@ class _InputOutputRulesScreenState
       body: SafeArea(
         child: Column(
           children: [
-            // ==================================================
-            // HEADER
-            // ==================================================
+          
+          // ==================================================
+          // HEADER
+          // ==================================================
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              14,
+              10,
+              14,
+              4,
+            ),
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    size: 18,
+                  ),
+                  color: navy,
+                ),
 
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                20,
-                14,
-                20,
-                0,
-              ),
-              child: Column(
-                children: [
-                  Row(
+                Expanded(
+                  child: Column(
                     children: [
-                      IconButton(
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(
-                          minWidth: 32,
-                          minHeight: 32,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: const Icon(
-                          Icons.arrow_back_ios_new_rounded,
-                          size: 19,
-                        ),
-                        color: navy,
-                      ),
-
-                      Expanded(
-                        child: Column(
-                          children: [
-                            const Text(
-                              'INPUT, OUTPUT & RULES',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 0.4,
-                                color: navy,
-                              ),
-                            ),
-
-                            const SizedBox(height: 4),
-
-                            Text(
-                              widget.caseData.title,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 10,
-                                color: textGrey,
-                              ),
-                            ),
-                          ],
+                      const Text(
+                        'INPUT, OUTPUT & RULES',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: .8,
+                          color: navy,
                         ),
                       ),
 
-                      IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => Scaffold(
-                              body: CasesScreen(),
-                            ),
-                          ),
-                        );
-                      },
-                      icon: const Icon(
-                        Icons.grid_view_rounded,
-                        size: 19,
+                      const SizedBox(height: 3),
+
+                      Text(
+                        widget.caseData.title,
+                        style: const TextStyle(
+                          fontSize: 9,
+                          color: textGrey,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      color: navy,
-                    ),
                     ],
                   ),
+                ),
 
-                  const SizedBox(height: 18),
-
-                  // ==================================================
-                  // PROGRESS 5 TAHAP
-                  // ==================================================
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 0,
-                      vertical: 12,
-                    ),
-                    child: Row(
-                      children: [
-                        _ProgressNumber(
-                          number: '1',
-                          active: true,
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => Scaffold(
+                          body: CasesScreen(),
                         ),
-
-                        Expanded(
-                          child: Container(
-                            height: 3,
-                            color: navy,
-                          ),
-                        ),
-
-                        _ProgressNumber(
-                          number: '2',
-                          active: true,
-                        ),
-
-                        Expanded(
-                          child: Container(
-                            height: 3,
-                            color: navy,
-                          ),
-                        ),
-
-                        _ProgressNumber(
-                          number: '3',
-                          active: true,
-                        ),
-
-                        Expanded(
-                          child: Container(
-                            height: 3,
-                            color: borderGrey,
-                          ),
-                        ),
-
-                        _ProgressNumber(
-                          number: '4',
-                          active: false,
-                        ),
-
-                        Expanded(
-                          child: Container(
-                            height: 3,
-                            color: borderGrey,
-                          ),
-                        ),
-
-                        _ProgressNumber(
-                          number: '5',
-                          active: false,
-                        ),
-                      ],
-                    ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.grid_view_rounded,
+                    size: 19,
                   ),
-                ],
-              ),
+                  color: navy,
+                ),
+              ],
             ),
+          ),
+
+          _buildProgress(),
+        
 
             // ==================================================
             // CONTENT
@@ -506,6 +536,10 @@ class _InputOutputRulesScreenState
                                               MaterialPageRoute(
                                                 builder: (_) => LogicBuilderScreen(
                                                   caseData: widget.caseData,
+                                                    maxReachedStep:
+                                                    widget.maxReachedStep < 4
+                                                        ? 4
+                                                        : widget.maxReachedStep,
                                                 ),
                                               ),
                                             );
@@ -558,32 +592,46 @@ class _InputOutputRulesScreenState
 class _ProgressNumber extends StatelessWidget {
   final String number;
   final bool active;
+  final bool enabled;
+  final VoidCallback? onTap;
 
   const _ProgressNumber({
     required this.number,
     required this.active,
+    required this.enabled,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 30,
-      height: 30,
-      decoration: BoxDecoration(
-        color: active ? navy : Colors.white,
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(
-          color: active ? navy : borderGrey,
-          width: 1,
+    return InkWell(
+      onTap: enabled ? onTap : null,
+      borderRadius: BorderRadius.circular(9),
+      child: Container(
+        width: 30,
+        height: 30,
+        decoration: BoxDecoration(
+          color: active || enabled
+              ? navy
+              : Colors.white,
+          border: Border.all(
+            color: active || enabled
+                ? navy
+                : borderGrey,
+          ),
+          borderRadius: BorderRadius.circular(9),
         ),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        number,
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w800,
-          color: active ? Colors.white : textGrey,
+        child: Center(
+          child: Text(
+            number,
+            style: TextStyle(
+              color: active || enabled
+                  ? Colors.white
+                  : textGrey,
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
         ),
       ),
     );
