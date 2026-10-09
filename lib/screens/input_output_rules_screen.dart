@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../main.dart';
 import '../models/case_model.dart';
 import 'logic_builder_screen.dart';
-import 'cases_screen.dart';
+import 'app_shell.dart';
 import 'problem_analysis_screen.dart';
 import 'information_identification_screen.dart';
 
@@ -231,16 +231,16 @@ class _InputOutputRulesScreenState
                 ),
 
                 IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => Scaffold(
-                          body: CasesScreen(),
-                        ),
-                      ),
-                    );
-                  },
+                  
+                onPressed: () {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AppShell(initialIndex: 1),
+                    ),
+                    (route) => route.isFirst,
+                  );
+                },
                   icon: const Icon(
                     Icons.grid_view_rounded,
                     size: 19,

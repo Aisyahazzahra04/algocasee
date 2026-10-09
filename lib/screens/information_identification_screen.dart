@@ -6,7 +6,7 @@ import '../main.dart';
 import '../models/case_model.dart';
 import '../services/database_service.dart';
 import 'input_output_rules_screen.dart';
-import 'cases_screen.dart';
+import 'app_shell.dart';
 import 'problem_analysis_screen.dart';
 
 class InformationIdentificationScreen
@@ -302,16 +302,16 @@ class _InformationIdentificationScreenState
                   ),
 
                   IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const Scaffold(
-                            body: CasesScreen(),
-                          ),
-                        ),
-                      );
-                    },
+                    
+                  onPressed: () {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const AppShell(initialIndex: 1),
+                      ),
+                      (route) => route.isFirst,
+                    );
+                  },
                     icon: const Icon(
                       Icons.grid_view_rounded,
                       size: 19,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'cases_screen.dart';
+import 'app_shell.dart';
 import '../main.dart';
 import '../models/case_model.dart';
 import 'package:algocasee/logic/logic_checker.dart' as logic_checker;
@@ -257,14 +257,14 @@ List<String> _getUserLogic() {
           ),
 
           IconButton(
+          
           onPressed: () {
-            Navigator.push(
+            Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                builder: (_) => const Scaffold(
-                  body: CasesScreen(),
-                ),
+                builder: (_) => const AppShell(initialIndex: 1),
               ),
+              (route) => route.isFirst,
             );
           },
           icon: const Icon(
