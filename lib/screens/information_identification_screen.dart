@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import '../main.dart';
 import '../models/case_model.dart';
+import '../services/database_service.dart';
 import 'input_output_rules_screen.dart';
 import 'cases_screen.dart';
 import 'problem_analysis_screen.dart';
@@ -27,7 +30,64 @@ class _InformationIdentificationScreenState
   final Set<int> selectedItems = {};
 
   bool submitted = false;
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedAnswer();
+  }
 
+  Future<void> _loadSavedAnswer() async {
+    final user = await DatabaseService.instance.getUser();
+    final userId = user?.id;
+
+    if (userId == null) return;
+
+    final saved = await DatabaseService.instance.getAnswer(
+      userId: userId,
+      caseId: '01',
+      stepId: 'information_identification',
+    );
+
+    if (saved == null) return;
+
+    try {
+      final data = jsonDecode(saved) as Map<String, dynamic>;
+      final savedItems = data['selectedItems'] as List<dynamic>? ?? [];
+
+      if (!mounted) return;
+
+      setState(() {
+        selectedItems
+          ..clear()
+          ..addAll(
+            savedItems.whereType<num>().map((item) => item.toInt()),
+          );
+
+        submitted = data['submitted'] as bool? ?? false;
+      });
+    } catch (e) {
+      debugPrint('Gagal membaca jawaban Step 2: $e');
+    }
+  }
+  
+  Future<void> _saveCurrentAnswer() async {
+    final user = await DatabaseService.instance.getUser();
+    final userId = user?.id;
+
+    if (userId == null) return;
+
+    final answerData = {
+      'selectedItems': selectedItems.toList(),
+      'submitted': submitted,
+    };
+
+    await DatabaseService.instance.saveAnswer(
+      userId: userId,
+      caseId: '01',
+      stepId: 'information_identification',
+      answer: jsonEncode(answerData),
+    );
+  }
   bool get isCorrect {
     final information =
         widget.caseData.informationIdentification.information;
@@ -44,17 +104,22 @@ class _InformationIdentificationScreenState
         selectedItems.containsAll(correctIndexes);
   }
 
-  void checkAnswer() {
+  
+  Future<void> checkAnswer() async {
     setState(() {
       submitted = true;
     });
+
+    await _saveCurrentAnswer();
   }
 
-  void tryAgain() {
+  Future<void> tryAgain() async {
     setState(() {
       selectedItems.clear();
       submitted = false;
     });
+
+    await _saveCurrentAnswer();
   }
 
   void continueToNext() {
@@ -384,20 +449,19 @@ class _InformationIdentificationScreenState
                           correct: showCorrect,
                           wrong: showWrong,
                           enabled: !submitted,
-                          onTap: () {
+                          
+                          onTap: () async {
                             if (submitted) return;
 
                             setState(() {
                               if (selected) {
-                                selectedItems.remove(
-                                  index,
-                                );
+                                selectedItems.remove(index);
                               } else {
-                                selectedItems.add(
-                                  index,
-                                );
+                                selectedItems.add(index);
                               }
                             });
+
+                            await _saveCurrentAnswer();
                           },
                         );
                       },

@@ -1,18 +1,30 @@
+
 import 'package:flutter/material.dart';
+
 import 'home_screen.dart';
 import 'cases_screen.dart';
 import 'profile_screen.dart';
 
 class AppShell extends StatefulWidget {
-  const AppShell({super.key});
+  final int initialIndex;
+
+  const AppShell({
+    super.key,
+    this.initialIndex = 0,
+  });
 
   @override
   State<AppShell> createState() => _AppShellState();
 }
 
 class _AppShellState extends State<AppShell> {
-  // Menentukan halaman bottom navigation yang sedang aktif.
-  int currentIndex = 0;
+  late int currentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    currentIndex = widget.initialIndex;
+  }
 
   // Daftar halaman utama aplikasi.
   final pages = const [
@@ -24,13 +36,13 @@ class _AppShellState extends State<AppShell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Menampilkan halaman sesuai index yang dipilih.
+      // Menampilkan halaman sesuai tab yang dipilih.
       body: IndexedStack(
         index: currentIndex,
         children: pages,
       ),
 
-      // BOTTOM NAVIGATION UTAMA
+      // Navigasi bawah utama.
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
         onDestinationSelected: (index) {
@@ -39,21 +51,21 @@ class _AppShellState extends State<AppShell> {
           });
         },
         destinations: const [
-          // TAB HOME
+
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
             selectedIcon: Icon(Icons.home),
             label: 'Home',
           ),
 
-          // TAB CASES
+
           NavigationDestination(
             icon: Icon(Icons.grid_view_outlined),
             selectedIcon: Icon(Icons.grid_view),
             label: 'Cases',
           ),
 
-          // TAB PROFILE
+
           NavigationDestination(
             icon: Icon(Icons.person_outline),
             selectedIcon: Icon(Icons.person),

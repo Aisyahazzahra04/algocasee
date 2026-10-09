@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../main.dart';
 import '../models/case_model.dart';
 import 'information_identification_screen.dart';
-import 'cases_screen.dart';
+import 'dart:convert';
+import '../services/database_service.dart';
+import 'app_shell.dart';
 
 class ProblemAnalysisScreen extends StatefulWidget {
   final CaseModel caseData;
@@ -24,25 +26,82 @@ class _ProblemAnalysisScreenState
     extends State<ProblemAnalysisScreen> {
   int? selectedAnswer;
   bool submitted = false;
+    @override
+  void initState() {
+    super.initState();
+    _loadSavedAnswer();
+  }
+
+  Future<void> _loadSavedAnswer() async {
+      final user = await DatabaseService.instance.getUser();
+
+      if (user == null) return;
+
+      final userId = user.id;
+
+      if (userId == null) return;
+
+      final saved = await DatabaseService.instance.getAnswer(
+        userId: userId,
+        caseId: '01',
+        stepId: 'problem_analysis',
+      );
+
+    if (saved == null) return;
+
+    try {
+      final data = jsonDecode(saved) as Map<String, dynamic>;
+
+      if (!mounted) return;
+
+      setState(() {
+        selectedAnswer = data['selectedAnswer'] as int?;
+        submitted = data['submitted'] as bool? ?? false;
+      });
+    } catch (e) {
+      debugPrint('Gagal membaca jawaban tersimpan: $e');
+    }
+  }
+
+    Future<void> _saveCurrentAnswer() async {
+    final user = await DatabaseService.instance.getUser();
+    final userId = user?.id;
+
+    if (userId == null) return;
+
+    await DatabaseService.instance.saveAnswer(
+      userId: userId,
+      caseId: '01',
+      stepId: 'problem_analysis',
+      answer: jsonEncode({
+        'selectedAnswer': selectedAnswer,
+        'submitted': submitted,
+      }),
+    );
+  }
 
   bool get isCorrect =>
       selectedAnswer ==
       widget.caseData.problemAnalysis.correctAnswer;
 
-  void checkAnswer() {
-    if (selectedAnswer == null) return;
+  Future<void> checkAnswer() async {
+  if (selectedAnswer == null) return;
 
-    setState(() {
-      submitted = true;
-    });
+  setState(() {
+    submitted = true;
+  });
+
+  await _saveCurrentAnswer();
   }
 
-  void tryAgain() {
+    Future<void> tryAgain() async {
     setState(() {
       selectedAnswer = null;
       submitted = false;
     });
-  }
+
+    await _saveCurrentAnswer();
+    }
 
   void continueToNext() {
     Navigator.push(
@@ -216,13 +275,12 @@ class _ProblemAnalysisScreenState
                   ),
                     IconButton(
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const Scaffold(
-                            body: CasesScreen(),
-                          ),
+                          builder: (_) => const AppShell(initialIndex: 1),
                         ),
+                        (route) => route.isFirst,
                       );
                     },
                     icon: const Icon(
@@ -358,13 +416,14 @@ class _ProblemAnalysisScreenState
                           correct: correct,
                           wrong: wrong,
                           enabled: !submitted,
-                          onTap: () {
+                          onTap: () async {
                             if (submitted) return;
 
                             setState(() {
-                              selectedAnswer =
-                                  index;
+                              selectedAnswer =index;
                             });
+
+                            await _saveCurrentAnswer();
                           },
                         );
                       },

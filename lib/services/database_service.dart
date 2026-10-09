@@ -324,6 +324,33 @@ class DatabaseService {
     );
   }
 
+  
+  // ============================================================
+  // GET ANSWER
+  // ============================================================
+
+  Future<String?> getAnswer({
+    required int userId,
+    required String caseId,
+    required String stepId,
+  }) async {
+    final db = await database;
+
+    final result = await db.query(
+      'user_answer',
+      columns: ['jawaban'],
+      where: 'id_user = ? AND id_case = ? AND id_step = ?',
+      whereArgs: [userId, caseId, stepId],
+      limit: 1,
+    );
+
+    if (result.isEmpty) {
+      return null;
+    }
+
+    return result.first['jawaban'] as String?;
+  }
+
   // ============================================================
   // SAVE ALGORITHM
   // ============================================================
