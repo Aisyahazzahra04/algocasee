@@ -1,10 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-import '../main.dart';
-import '../widgets/app_logo.dart';
 import '../services/database_service.dart';
-
 import 'identity_screen.dart';
 import 'app_shell.dart';
 
@@ -58,48 +55,42 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: lightGrey,
-
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // LOGO APLIKASI
-              const AppLogo(size: 64),
-
-              const SizedBox(height: 20),
-
-              // NAMA APLIKASI
-              const Text(
-                'ALGOCASE',
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 2,
-                  color: navy,
-                ),
-              ),
-
-              const SizedBox(height: 5),
-
-              // TAGLINE APLIKASI
-              const Text(
-                'Think. Analyze. Solve.',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  fontStyle: FontStyle.italic,
-                  color: textGrey,
-                ),
-              ),
-            ],
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // BACKGROUND GAMBAR
+          Image.asset(
+            'assets/images/splash_background.png',
+            fit: BoxFit.cover,
           ),
-        ),
+
+          // LAPISAN PUTIH TRANSPARAN AGAR TEKS JELAS
+          Container(
+            color: Colors.white.withValues(alpha: 0.18),
+          ),
+
+          // KONTEN SPLASH SCREEN
+          SafeArea(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                  'assets/images/logo_algocase.png',
+                  width: 320,
+                  fit: BoxFit.contain,
+                ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
+
 }
