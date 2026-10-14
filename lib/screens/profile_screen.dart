@@ -101,7 +101,27 @@ class ProfileScreen extends StatelessWidget {
         final double progress =
             (completedCases / totalCases).clamp(0.0, 1.0);
 
-        return SafeArea(
+        return Stack(
+        fit: StackFit.expand,
+        children: [
+        // BACKGROUND
+        Image.asset(
+          'assets/images/backgroundnav.png',
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return const ColoredBox(
+              color: Color(0xFFF7FAFF),
+            );
+          },
+        ),
+
+        // LAPISAN PUTIH TRANSPARAN
+        Container(
+          color: Colors.white.withValues(alpha: 0.15),
+        ),
+
+        // KONTEN PROFILE
+        SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(
               20,
@@ -277,7 +297,6 @@ class ProfileScreen extends StatelessWidget {
                       const SizedBox(height: 12),
 
                       // PROGRESS BAR
-
                       ClipRRect(
                         borderRadius:
                             BorderRadius.circular(10),
@@ -450,6 +469,8 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
           ),
+        ),
+        ],
         );
       },
     );

@@ -10,8 +10,26 @@ class CasesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
+  return Stack(
+    children: [
+      // BACKGROUND
+      Positioned.fill(
+        child: Image.asset(
+          'assets/images/backgroundnav.png',
+          fit: BoxFit.cover,
+        ),
+      ),
+
+      // LAPISAN PUTIH TRANSPARAN
+      Positioned.fill(
+        child: Container(
+          color: Colors.white.withValues(alpha: 0.15),
+        ),
+      ),
+
+      // KONTEN HALAMAN CASES
+      SafeArea(
+        child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,6 +154,8 @@ class CasesScreen extends StatelessWidget {
           ],
         ),
       ),
+      )
+    ],
     );
   }
 }
