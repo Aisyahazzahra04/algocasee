@@ -54,129 +54,137 @@ class _UserIdentityScreenState extends State<UserIdentityScreen> {
       ),
     );
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: lightGrey,
-
+      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: lightGrey,
+        backgroundColor: Colors.transparent,
         elevation: 0,
+        toolbarHeight: 0,
       ),
-
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-
-          children: [
-            const Spacer(),
-
-            // ICON USER
-            Center(
-              child: Container(
-                height: 80,
-                width: 80,
-
-                decoration: BoxDecoration(
-                  color: navy,
-                  borderRadius: BorderRadius.circular(24),
-                ),
-
-                child: const Icon(
-                  Icons.person_outline,
-                  color: Colors.white,
-                  size: 40,
-                ),
-              ),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // BACKGROUND SAMPAI ATAS LAYAR
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/splash_background.png',
+              fit: BoxFit.cover,
             ),
+          ),
 
-            const SizedBox(height: 28),
+          // LAPISAN PUTIH TRANSPARAN
+          Container(
+            color: Colors.white.withValues(alpha: 0.15),
+          ),
 
-            // JUDUL
-            const Center(
-              child: Text(
-                'Siap menjelajahi case?',
-                textAlign: TextAlign.center,
+          // KONTEN INPUT NAMA
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Spacer(),
 
-                style: TextStyle(
-                  fontSize: 27,
-                  fontWeight: FontWeight.bold,
-                  color: textDark,
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            // DESKRIPSI
-            const Center(
-              child: Text(
-                'Masukkan nama kamu untuk memulai.',
-                textAlign: TextAlign.center,
-
-                style: TextStyle(
-                  color: textGrey,
-                  height: 1.5,
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            // INPUT NAMA
-            TextField(
-              controller: controller,
-
-              decoration: InputDecoration(
-                labelText: 'Nama kamu',
-
-                prefixIcon: const Icon(
-                  Icons.person_outline,
-                ),
-
-                filled: true,
-                fillColor: Colors.white,
-
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(
-                    color: borderGrey,
+                  // ICON USER
+                  Center(
+                    child: Container(
+                      height: 80,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        color: navy,
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: const Icon(
+                        Icons.person_outline,
+                        color: Colors.white,
+                        size: 40,
+                      ),
+                    ),
                   ),
-                ),
 
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(
-                    color: borderGrey,
-                  ),
-                ),
+                  const SizedBox(height: 28),
 
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(
-                    color: blue,
-                    width: 1.5,
+                  // JUDUL
+                  const Center(
+                    child: Text(
+                      'Siap menjelajahi case?',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 27,
+                        fontWeight: FontWeight.bold,
+                        color: textDark,
+                      ),
+                    ),
                   ),
-                ),
+
+                  const SizedBox(height: 10),
+
+                  // DESKRIPSI
+                  const Center(
+                    child: Text(
+                      'Masukkan nama kamu untuk memulai.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: textGrey,
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // INPUT NAMA
+                  TextField(
+                    controller: controller,
+                    decoration: InputDecoration(
+                      labelText: 'Nama kamu',
+                      prefixIcon: const Icon(
+                        Icons.person_outline,
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: borderGrey,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: borderGrey,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: blue,
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 18),
+
+                  // BUTTON
+                  PrimaryButton(
+                    text: 'Mulai Belajar',
+                    icon: Icons.arrow_forward,
+                    onPressed: start,
+                  ),
+
+                  const Spacer(),
+                ],
               ),
             ),
-
-            const SizedBox(height: 18),
-
-            // BUTTON
-            PrimaryButton(
-              text: 'Mulai Belajar',
-              icon: Icons.arrow_forward,
-              onPressed: start,
-            ),
-
-            const Spacer(),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
-}
+}  
