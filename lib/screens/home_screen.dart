@@ -200,8 +200,21 @@ class HomeScreen extends StatelessWidget {
             // HOME
             // ====================================================
 
-            return SafeArea(
-              child: SingleChildScrollView(
+            return Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/backgroundnav.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+          Positioned.fill(
+            child: Container(
+              color: Colors.white.withValues(alpha: 0.18),
+            ),
+          ),
+          SafeArea(
+            child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(
                   20,
                   18,
@@ -454,6 +467,12 @@ class HomeScreen extends StatelessWidget {
                           onPressed: () {},
                           child: const Text(
                             'Lihat semua',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight:
+                                  FontWeight.w700,
+                              color: textDark,
+                            ),
                           ),
                         ),
                       ],
@@ -494,6 +513,7 @@ class HomeScreen extends StatelessWidget {
 
                     const SizedBox(height: 10),
 
+
                     // ==================================================
                     // CASE 03
                     // ==================================================
@@ -510,11 +530,12 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
               ),
-            );
-          },
+            ),
+          ],
         );
       },
     );
-  }
+  },
+);
 }
-
+}
