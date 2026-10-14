@@ -1,17 +1,75 @@
-# algocasee
+# AlgoCase
 
-A new Flutter project.
+**Aplikasi Pembelajaran Logika Algoritma melalui Studi Kasus**
 
-## Getting Started
+## Tentang Aplikasi
 
-This project is a starting point for a Flutter application.
+AlgoCase merupakan aplikasi pembelajaran berbasis mobile yang dirancang untuk membantu pemula memahami logika algoritma melalui pendekatan studi kasus. Pengguna diajak menganalisis masalah, mengidentifikasi informasi yang relevan, menentukan input dan output, serta menyusun logika penyelesaian sebelum mulai membuat program.
 
-A few resources to get you started if this is your first Flutter project:
+## Fitur Aplikasi
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- Splash screen dan pengenalan aplikasi.
+- Input nama pengguna.
+- Tutorial penggunaan aplikasi.
+- Halaman Home dan daftar kasus.
+- Halaman briefing kasus.
+- Tahapan analisis dan penyelesaian kasus.
+- Logic Builder.
+- Halaman Profile.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Teknologi yang Digunakan
+
+- Flutter
+- Dart
+- SQLite
+
+## Tampilan Aplikasi
+
+### Splash Screen
+![Splash Screen](screenshots/splash.png)
+
+### Input Nama
+![Input Nama](screenshots/name-input.png)
+
+### Tutorial
+![Tutorial](screenshots/tutorial.png)
+
+### Home
+![Home](screenshots/home.png)
+
+### Cases
+![Cases](screenshots/cases.png)
+
+### Case Briefing
+![Case Briefing](screenshots/case-briefing.png)
+
+### Step 1 — Problem Analysis
+![Problem Analysis](screenshots/problem-analysis.png)
+
+### Step 2 — Information Identification
+![Information Identification](screenshots/information-identification.png)
+
+### Step 3 — Input, Output, and Rules
+![Input Output Rules](screenshots/input-output-rules.png)
+
+### Logic Builder
+![Logic Builder](screenshots/logic-builder.png)
+
+### Profile
+![Profile](screenshots/profile.png)
+
+## Cara Menjalankan Aplikasi
+
+1. Pastikan Flutter sudah terpasang.
+2. Clone repositori ini atau unduh source code.
+3. Buka folder proyek di terminal.
+4. Jalankan perintah berikut:
+
+   ```bash
+   flutter pub get
+   flutter run
+   ```
+
+## Pengembangan
+
+AlgoCase dikembangkan sebagai proyek pembelajaran untuk membantu pengguna memahami dasar-dasar logika algoritma melalui studi kasus.
