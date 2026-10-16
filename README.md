@@ -26,19 +26,19 @@ AlgoCase merupakan aplikasi pembelajaran berbasis mobile yang dirancang untuk me
 ## Tampilan Aplikasi
 
 ### Splash Screen
-![Splash Screen](screenshots/splash.png)
+![Splash Screen](screenshots/splashnw.png)
 
 ### Input Nama
-![Input Nama](screenshots/name-input.png)
+![Input Nama](screenshots/name-inputnw.png)
 
 ### Tutorial
 ![Tutorial](screenshots/tutorial.png)
 
 ### Home
-![Home](screenshots/home.png)
+![Home](screenshots/homenw.png)
 
 ### Cases
-![Cases](screenshots/cases.png)
+![Cases](screenshots/casesnw.png)
 
 ### Case Briefing
 ![Case Briefing](screenshots/case-briefing.png)
@@ -56,7 +56,7 @@ AlgoCase merupakan aplikasi pembelajaran berbasis mobile yang dirancang untuk me
 ![Logic Builder](screenshots/logic-builder.png)
 
 ### Profile
-![Profile](screenshots/profile.png)
+![Profile](screenshots/profilenw.png)
 
 ## Cara Menjalankan Aplikasi
 
