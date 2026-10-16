@@ -956,10 +956,13 @@ Future<String?> _showNodeDialog(
       Expanded(
         child: SizedBox(
           height: 48,
-          child: OutlinedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
+          child: 
+            OutlinedButton(
+              onPressed: () {
+                setState(() {
+                  _nodes.clear();
+                });
+              },
             style: OutlinedButton.styleFrom(
               foregroundColor: navy,
               side: const BorderSide(

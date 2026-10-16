@@ -6,6 +6,7 @@ import '../services/database_service.dart';
 import '../widgets/app_card.dart';
 import '../widgets/app_buttons.dart';
 import '../widgets/small_case_card.dart';
+import 'app_shell.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -464,7 +465,15 @@ class HomeScreen extends StatelessWidget {
                         ),
 
                         TextButton(
-                          onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const AppShell(initialIndex: 1),
+                            ),
+                            (route) => route.isFirst,
+                          );
+                        },
                           child: const Text(
                             'Lihat semua',
                             style: TextStyle(
