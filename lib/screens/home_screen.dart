@@ -278,7 +278,7 @@ class HomeScreen extends StatelessWidget {
                                 ),
                                 child: const Icon(
                                   Icons.trending_up,
-                                  color: blue,
+                                  color: navy
                                 ),
                               ),
 

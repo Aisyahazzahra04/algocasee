@@ -971,7 +971,7 @@ Future<String?> _showNodeDialog(
               ),
             ),
             child: const Text(
-              'BACK',
+              'RESET',
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,

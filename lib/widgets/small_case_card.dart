@@ -34,6 +34,10 @@ class SmallCaseCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: color.withValues(alpha: .09),
               borderRadius: BorderRadius.circular(13),
+                border: Border.all(
+                color: const Color(0xFF1E2A44),
+                width: 1.2,
+              ),
             ),
             child: Text(
               number,

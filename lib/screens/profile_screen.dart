@@ -259,7 +259,8 @@ class ProfileScreen extends StatelessWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: borderGrey,
+                      color: navy,
+                      width: 1.2,
                     ),
                   ),
                   child: Column(
@@ -288,7 +289,7 @@ class ProfileScreen extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
-                              color: blue,
+                              color: navy,
                             ),
                           ),
                         ],
@@ -317,7 +318,7 @@ class ProfileScreen extends StatelessWidget {
                         '$completedCases dari $totalCases case sudah diselesaikan.',
                         style: const TextStyle(
                           fontSize: 12,
-                          color: textGrey,
+                          color: Color(0xFF344054),
                         ),
                       ),
                     ],
@@ -394,7 +395,8 @@ class ProfileScreen extends StatelessWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: borderGrey,
+                      color: navy,
+                      width: 1.2,
                     ),
                   ),
                   child: Column(
@@ -457,7 +459,7 @@ class ProfileScreen extends StatelessWidget {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: navy,
                       side: const BorderSide(
-                        color: borderGrey,
+                        color: navy,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius:
@@ -502,7 +504,7 @@ class _StatisticCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: borderGrey,
+          color: navy,
         ),
       ),
       child: Column(
@@ -544,7 +546,7 @@ class _StatisticCard extends StatelessWidget {
             label,
             style: const TextStyle(
               fontSize: 12,
-              color: textGrey,
+              color: navy,
             ),
           ),
         ],
@@ -595,7 +597,7 @@ class _InfoRow extends StatelessWidget {
             title,
             style: const TextStyle(
               fontSize: 13,
-              color: textGrey,
+              color: navy,
             ),
           ),
         ),
