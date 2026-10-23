@@ -523,29 +523,25 @@ class _InputOutputRulesScreenState
                         Expanded(
                           child: SizedBox(
                             height: 50,
-                            child: ElevatedButton(
-                              onPressed:
-                                  selectedInput != null &&
-                                          selectedOutput !=
-                                              null &&
-                                          selectedRules
-                                              .isNotEmpty
-                                      ? () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (_) => LogicBuilderScreen(
-                                                  caseData: widget.caseData,
-                                                    maxReachedStep:
-                                                    widget.maxReachedStep < 4
-                                                        ? 4
-                                                        : widget.maxReachedStep,
-                                                ),
-                                              ),
-                                            );
-                                          }
-                                      : null,
-                              style:
+                            child: ElevatedButton( 
+                            onPressed: inputCorrect &&
+                                    outputCorrect &&
+                                    rulesCorrect
+                                ? () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => LogicBuilderScreen(
+                                          caseData: widget.caseData,
+                                          maxReachedStep:
+                                              widget.maxReachedStep < 4
+                                                  ? 4
+                                                  : widget.maxReachedStep,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                : null,                              style:
                                   ElevatedButton.styleFrom(
                                 backgroundColor: navy,
                                 disabledBackgroundColor:

@@ -398,8 +398,8 @@ class _ProblemAnalysisScreenState
 
                         final correct =
                             submitted &&
-                            index ==
-                                data.correctAnswer;
+                             isCorrect &&
+                            index == data.correctAnswer;
 
                         final wrong =
                             submitted &&

@@ -430,10 +430,7 @@ class _InformationIdentificationScreenState
 
                         final selected =
                             selectedItems.contains(index);
-
-                        final showCorrect =
-                            submitted && item.relevant;
-
+                        final showCorrect =  submitted && isCorrect && item.relevant;
                         final showWrong =
                             submitted &&
                             selected &&
