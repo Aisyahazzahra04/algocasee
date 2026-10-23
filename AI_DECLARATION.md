@@ -4,7 +4,19 @@
 Alat AI yang digunakan dalam pengembangan aplikasi AlgoCase adalah ChatGPT.
 
 ## 2. Pembagian Peran AI dan Pengembang
-*Bagian ini akan dilengkapi*
+Pembagian peran dalam pengembangan aplikasi AlgoCase dilakukan berdasarkan penggunaan AI sebagai alat bantu dan pengerjaan yang dilakukan secara mandiri oleh pengembang.
+
+**A. Modul yang Dibantu AI**
+1. Antarmuka pengguna (UI), AI membantu memberikan saran dan contoh kode untuk pengembangan tampilan halaman aplikasi menggunakan Flutter.
+2. Navigasi aplikasi, AI membantu menganalisis kendala navigasi, termasuk masalah bottom navigation yang tidak muncul ketika pengguna kembali ke halaman Case.
+3. Pemecahan masalah kode, AI membantu menjelaskan kemungkinan penyebab error dan memberikan alternatif solusi selama proses pengembangan.
+
+**B. Modul yang Dikerjakan Secara Mandiri**
+1. Konsep dan alur aplikasi, Menentukan tujuan aplikasi AlgoCase, kebutuhan fitur, serta tahapan pembelajaran berbasis kasus.
+2. Perancangan fitur pembelajaran, Menentukan alur penyelesaian kasus, mulai dari memahami masalah hingga menyusun logika algoritmik.
+3. Pemeriksaan dan pengujian, Memeriksa hasil kode dari AI, menyesuaikannya dengan struktur aplikasi, serta menguji apakah perubahan berjalan sesuai kebutuhan.
+
+AI digunakan sebagai pendukung dalam proses pengembangan, bukan sebagai pengganti peran pengembang. Pengembang tetap bertanggung jawab atas penentuan kebutuhan, pengambilan keputusan, penyesuaian kode, dan pengujian aplikasi AlgoCase.
 
 ## 3. Studi Kasus Prompting
 
