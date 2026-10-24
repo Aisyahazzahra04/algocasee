@@ -144,10 +144,12 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
     });
   }
 
-  void _deleteBranchNode(
+    void _deleteBranchNode(
     List<_FlowNode> branch,
     _FlowNode node,
   ) {
+    if (!_isEditing) return;
+
     setState(() {
       branch.remove(node);
       _isSaved = false;
@@ -475,11 +477,13 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
                   node,
                   onTap: _isEditing ? () => _editNode(node) : () {},
                   onDelete: () {
-                    setState(() {
-                      _nodes.remove(node);
-                      _isSaved = false;
-                    });
-                  },
+                  if (!_isEditing) return;
+
+                  setState(() {
+                    _nodes.remove(node);
+                    _isSaved = false;
+                  });
+                },
                 ),
               ),
               if (index < _nodes.length - 1)
