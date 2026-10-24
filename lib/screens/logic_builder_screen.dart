@@ -48,12 +48,13 @@ class LogicBuilderScreen extends StatefulWidget {
 class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
   final List<_FlowNode> _nodes = [];
   bool _isSaved = false;
+  bool _isEditing = true;
 
   // ============================================================
   // SAVE LOGIC
   // ============================================================
 
-  void _saveLogic() {
+    void _saveLogic() {
     if (_nodes.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -65,6 +66,7 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
 
     setState(() {
       _isSaved = true;
+      _isEditing = false;
     });
   }
 
@@ -420,6 +422,7 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
         const _TerminatorNode(text: 'START', onTap: null),
         _Connector(
           onTap: () {
+            if (!_isEditing) return;
             _showAddMenu(
               onSelected: (type) => _addNode(_nodes, type: type),
             );
@@ -428,6 +431,7 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
         if (_nodes.isEmpty) const _EmptyFlowHint() else _buildMainNodes(),
         _Connector(
           onTap: () {
+            if (!_isEditing) return;
             _showAddMenu(
               onSelected: (type) => _addNode(_nodes, type: type),
             );
@@ -469,7 +473,7 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
                 index: index,
                 child: _buildNode(
                   node,
-                  onTap: () => _editNode(node),
+                  onTap: _isEditing ? () => _editNode(node) : () {},
                   onDelete: () {
                     setState(() {
                       _nodes.remove(node);
@@ -481,6 +485,7 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
               if (index < _nodes.length - 1)
                 _Connector(
                   onTap: () {
+                    if (!_isEditing) return;
                     _showAddMenu(
                       onSelected: (type) => _addNode(
                         _nodes,
@@ -512,7 +517,7 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
           title: 'INPUT',
           text: node.text,
           color: const Color(0xFFDDEAFF),
-          onTap: onTap,
+          onTap: _isEditing ? onTap : () {},
           onDelete: onDelete,
         );
       case _LogicType.output:
@@ -520,7 +525,7 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
           title: 'OUTPUT',
           text: node.text,
           color: const Color(0xFFD8F7D8),
-          onTap: onTap,
+          onTap: _isEditing ? onTap : () {},
           onDelete: onDelete,
         );
       case _LogicType.process:
@@ -528,7 +533,7 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
           title: 'PROCESS',
           text: node.text,
           color: const Color(0xFFFFF0B8),
-          onTap: onTap,
+          onTap: _isEditing ? onTap : () {},
           onDelete: onDelete,
         );
       case _LogicType.decision:
@@ -536,7 +541,7 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
           text: node.text,
           trueBranch: node.trueBranch,
           falseBranch: node.falseBranch,
-          onTap: onTap,
+          onTap: _isEditing ? onTap : () {},
           onDelete: onDelete,
           onAddBranchNode: _addBranchNode,
           onEditNode: _editNode,
@@ -818,6 +823,7 @@ Widget _buildBottomButtons() {
             child: OutlinedButton(
               onPressed: () {
                 setState(() {
+                  _isEditing = true;
                   _isSaved = false;
                 });
               },
