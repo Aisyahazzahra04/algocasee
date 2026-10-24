@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'app_shell.dart';
 import '../main.dart';
 import '../models/case_model.dart';
-import 'package:algocasee/logic/logic_checker.dart' as logic_checker;
+import 'run_simulation_screen.dart';
 
 import 'problem_analysis_screen.dart';
 import 'information_identification_screen.dart';
@@ -42,79 +42,81 @@ class LogicBuilderScreen extends StatefulWidget {
   });
 
   @override
-  State<LogicBuilderScreen> createState() =>
-      _LogicBuilderScreenState();
+  State<LogicBuilderScreen> createState() => _LogicBuilderScreenState();
 }
 
 class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
   final List<_FlowNode> _nodes = [];
+  bool _isSaved = false;
 
-// ============================================================
-// CHECK LOGIC
-// ============================================================
+  // ============================================================
+  // SAVE LOGIC
+  // ============================================================
 
-void _checkLogic() {
-  final userLogic = _getUserLogic();
-
-  final result = logic_checker.LogicChecker.check(
-  caseData: widget.caseData,
-  userLogic: userLogic,
-  );
-
-  showDialog<void>(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: Text(
-          result.isCorrect
-              ? 'LOGIKA BENAR'
-              : 'LOGIKA BELUM SESUAI',
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: result.messages
-              .map((message) => Text(message))
-              .toList(),
+  void _saveLogic() {
+    if (_nodes.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Tambahkan blok logika terlebih dahulu.'),
         ),
       );
-    },
-  );
-}
+      return;
+    }
 
-// ============================================================
-// GET USER LOGIC
-// ============================================================
+    setState(() {
+      _isSaved = true;
+    });
+  }
 
-List<String> _getUserLogic() {
-  final logic = <String>[];
+  // ============================================================
+  // GET USER LOGIC
+  // ============================================================
 
-  logic.add('START');
+  List<String> _getUserLogic() {
+    final logic = <String>['START'];
 
-  for (final node in _nodes) {
+    for (final node in _nodes) {
+      switch (node.type) {
+        case _LogicType.input:
+          logic.add('INPUT ${node.text}');
+          break;
+        case _LogicType.output:
+          logic.add('OUTPUT ${node.text}');
+          break;
+        case _LogicType.process:
+          logic.add('PROCESS ${node.text}');
+          break;
+        case _LogicType.decision:
+          logic.add('DECISION ${node.text}');
+          logic.add('TRUE:');
+          for (final branchNode in node.trueBranch) {
+            logic.addAll(_serializeBranchNode(branchNode));
+          }
+          logic.add('FALSE:');
+          for (final branchNode in node.falseBranch) {
+            logic.addAll(_serializeBranchNode(branchNode));
+          }
+          break;
+      }
+    }
+
+    logic.add('END');
+    return logic;
+  }
+
+  List<String> _serializeBranchNode(_FlowNode node) {
     switch (node.type) {
       case _LogicType.input:
-        logic.add('INPUT ${node.text}');
-        break;
-
+        return ['INPUT ${node.text}'];
       case _LogicType.output:
-        logic.add('OUTPUT ${node.text}');
-        break;
-
+        return ['OUTPUT ${node.text}'];
       case _LogicType.process:
-        logic.add('PROCESS ${node.text}');
-        break;
-
+        return ['PROCESS ${node.text}'];
       case _LogicType.decision:
-        logic.add('DECISION ${node.text}');
-        break;
+        return ['DECISION ${node.text}'];
     }
   }
 
-  logic.add('END');
-
-  return logic;
-
-}
   // ============================================================
   // ADD BRANCH NODE
   // ============================================================
@@ -125,7 +127,7 @@ List<String> _getUserLogic() {
   ) async {
     final text = await _showNodeDialog(type);
 
-    if (text == null || text.trim().isEmpty) {
+    if (!mounted || text == null || text.trim().isEmpty) {
       return;
     }
 
@@ -136,6 +138,24 @@ List<String> _getUserLogic() {
           text: text.trim(),
         ),
       );
+      _isSaved = false;
+    });
+  }
+
+  void _deleteBranchNode(
+    List<_FlowNode> branch,
+    _FlowNode node,
+  ) {
+    setState(() {
+      branch.remove(node);
+      _isSaved = false;
+    });
+  }
+
+  void _markUnsaved() {
+    if (!mounted) return;
+    setState(() {
+      _isSaved = false;
     });
   }
 
@@ -156,23 +176,16 @@ List<String> _getUserLogic() {
             _buildProgress(),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(
-                  20,
-                  18,
-                  20,
-                  30,
-                ),
+                padding: const EdgeInsets.fromLTRB(20, 18, 20, 30),
                 child: Column(
                   children: [
                     _buildStepHint(data),
-
                     const SizedBox(height: 22),
-
-                    Align(
+                    const Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         'ALUR LOGIKA',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w800,
                           color: navy,
@@ -180,13 +193,9 @@ List<String> _getUserLogic() {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 16),
-
                     _buildFlowchart(),
-
                     const SizedBox(height: 28),
-
                     _buildBottomButtons(),
                   ],
                 ),
@@ -204,12 +213,7 @@ List<String> _getUserLogic() {
 
   Widget _buildHeader() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        20,
-        12,
-        20,
-        0,
-      ),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
       child: Row(
         children: [
           IconButton(
@@ -218,16 +222,13 @@ List<String> _getUserLogic() {
               minWidth: 32,
               minHeight: 32,
             ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: () => Navigator.pop(context),
             icon: const Icon(
               Icons.arrow_back_ios_new_rounded,
               size: 19,
             ),
             color: navy,
           ),
-
           Expanded(
             child: Column(
               children: [
@@ -241,9 +242,7 @@ List<String> _getUserLogic() {
                     color: navy,
                   ),
                 ),
-
                 const SizedBox(height: 4),
-
                 Text(
                   widget.caseData.title,
                   textAlign: TextAlign.center,
@@ -255,29 +254,26 @@ List<String> _getUserLogic() {
               ],
             ),
           ),
-
           IconButton(
-          
-          onPressed: () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const AppShell(initialIndex: 1),
-              ),
-              (route) => route.isFirst,
-            );
-          },
-          icon: const Icon(
-            Icons.grid_view_rounded,
-            size: 19,
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const AppShell(initialIndex: 1),
+                ),
+                (route) => route.isFirst,
+              );
+            },
+            icon: const Icon(
+              Icons.grid_view_rounded,
+              size: 19,
+            ),
+            color: navy,
           ),
-          color: navy,
-        ),
         ],
       ),
     );
   }
-
 
   // ============================================================
   // PROGRESS
@@ -285,12 +281,7 @@ List<String> _getUserLogic() {
 
   Widget _buildProgress() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        20,
-        18,
-        20,
-        0,
-      ),
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
       child: Row(
         children: [
           _ProgressNumber(
@@ -309,16 +300,12 @@ List<String> _getUserLogic() {
               );
             },
           ),
-
           Expanded(
             child: Container(
               height: 3,
-              color: widget.maxReachedStep >= 2
-                  ? navy
-                  : borderGrey,
+              color: widget.maxReachedStep >= 2 ? navy : borderGrey,
             ),
           ),
-
           _ProgressNumber(
             number: '2',
             active: false,
@@ -328,27 +315,21 @@ List<String> _getUserLogic() {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) =>
-                            InformationIdentificationScreen(
+                        builder: (_) => InformationIdentificationScreen(
                           caseData: widget.caseData,
-                          maxReachedStep:
-                              widget.maxReachedStep,
+                          maxReachedStep: widget.maxReachedStep,
                         ),
                       ),
                     );
                   }
                 : null,
           ),
-
           Expanded(
             child: Container(
               height: 3,
-              color: widget.maxReachedStep >= 3
-                  ? navy
-                  : borderGrey,
+              color: widget.maxReachedStep >= 3 ? navy : borderGrey,
             ),
           ),
-
           _ProgressNumber(
             number: '3',
             active: false,
@@ -358,41 +339,30 @@ List<String> _getUserLogic() {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) =>
-                            InputOutputRulesScreen(
+                        builder: (_) => InputOutputRulesScreen(
                           caseData: widget.caseData,
-                          maxReachedStep:
-                              widget.maxReachedStep,
+                          maxReachedStep: widget.maxReachedStep,
                         ),
                       ),
                     );
                   }
                 : null,
           ),
-
           Expanded(
-            child: Container(
-              height: 3,
-              color: navy,
-            ),
+            child: Container(height: 3, color: navy),
           ),
-
           _ProgressNumber(
             number: '4',
             active: true,
             enabled: false,
             onTap: null,
           ),
-
           Expanded(
             child: Container(
               height: 3,
-              color: widget.maxReachedStep >= 5
-                  ? navy
-                  : borderGrey,
+              color: widget.maxReachedStep >= 5 ? navy : borderGrey,
             ),
           ),
-
           _ProgressNumber(
             number: '5',
             active: false,
@@ -403,7 +373,6 @@ List<String> _getUserLogic() {
       ),
     );
   }
-  
 
   // ============================================================
   // STEP HINT
@@ -415,9 +384,7 @@ List<String> _getUserLogic() {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(
-          color: borderGrey,
-        ),
+        border: Border.all(color: borderGrey),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -432,27 +399,12 @@ List<String> _getUserLogic() {
               color: teal,
             ),
           ),
-
           const SizedBox(height: 10),
-
-          _HintRow(
-            label: 'INPUT',
-            text: data.inputQuestion,
-          ),
-
+          _HintRow(label: 'INPUT', text: data.inputQuestion),
           const SizedBox(height: 7),
-
-          _HintRow(
-            label: 'OUTPUT',
-            text: data.outputQuestion,
-          ),
-
+          _HintRow(label: 'OUTPUT', text: data.outputQuestion),
           const SizedBox(height: 7),
-
-          _HintRow(
-            label: 'RULES',
-            text: data.rulesQuestion,
-          ),
+          _HintRow(label: 'RULES', text: data.rulesQuestion),
         ],
       ),
     );
@@ -465,47 +417,23 @@ List<String> _getUserLogic() {
   Widget _buildFlowchart() {
     return Column(
       children: [
-        const _TerminatorNode(
-          text: 'START',
-          onTap: null,
-        ),
-
+        const _TerminatorNode(text: 'START', onTap: null),
         _Connector(
           onTap: () {
             _showAddMenu(
-              onSelected: (type) {
-                _addNode(
-                  _nodes,
-                  type: type,
-                );
-              },
+              onSelected: (type) => _addNode(_nodes, type: type),
             );
           },
         ),
-
-        if (_nodes.isEmpty)
-          const _EmptyFlowHint()
-        else
-          _buildMainNodes(),
-
-        // Connector menuju END
+        if (_nodes.isEmpty) const _EmptyFlowHint() else _buildMainNodes(),
         _Connector(
           onTap: () {
             _showAddMenu(
-              onSelected: (type) {
-                _addNode(
-                  _nodes,
-                  type: type,
-                );
-              },
+              onSelected: (type) => _addNode(_nodes, type: type),
             );
           },
         ),
-
-        const _TerminatorNode(
-          text: 'END',
-          onTap: null,
-        ),
+        const _TerminatorNode(text: 'END', onTap: null),
       ],
     );
   }
@@ -520,18 +448,16 @@ List<String> _getUserLogic() {
       physics: const NeverScrollableScrollPhysics(),
       buildDefaultDragHandles: false,
       itemCount: _nodes.length,
-
-        onReorderItem: (oldIndex, newIndex) {
+      onReorderItem: (oldIndex, newIndex) {
         setState(() {
           if (oldIndex < newIndex) {
             newIndex -= 1;
           }
-
           final node = _nodes.removeAt(oldIndex);
           _nodes.insert(newIndex, node);
+          _isSaved = false;
         });
       },
-
       itemBuilder: (context, index) {
         final node = _nodes[index];
 
@@ -543,29 +469,24 @@ List<String> _getUserLogic() {
                 index: index,
                 child: _buildNode(
                   node,
-                  onTap: () {
-                    _editNode(node);
-                  },
+                  onTap: () => _editNode(node),
                   onDelete: () {
                     setState(() {
                       _nodes.remove(node);
+                      _isSaved = false;
                     });
                   },
                 ),
               ),
-
-              // Connector antar blok
               if (index < _nodes.length - 1)
                 _Connector(
                   onTap: () {
                     _showAddMenu(
-                      onSelected: (type) {
-                        _addNode(
-                          _nodes,
-                          type: type,
-                          insertIndex: index + 1,
-                        );
-                      },
+                      onSelected: (type) => _addNode(
+                        _nodes,
+                        type: type,
+                        insertIndex: index + 1,
+                      ),
                     );
                   },
                 ),
@@ -594,7 +515,6 @@ List<String> _getUserLogic() {
           onTap: onTap,
           onDelete: onDelete,
         );
-
       case _LogicType.output:
         return _ParallelogramNode(
           title: 'OUTPUT',
@@ -603,7 +523,6 @@ List<String> _getUserLogic() {
           onTap: onTap,
           onDelete: onDelete,
         );
-
       case _LogicType.process:
         return _RectangleNode(
           title: 'PROCESS',
@@ -612,7 +531,6 @@ List<String> _getUserLogic() {
           onTap: onTap,
           onDelete: onDelete,
         );
-
       case _LogicType.decision:
         return _DecisionNode(
           text: node.text,
@@ -622,6 +540,8 @@ List<String> _getUserLogic() {
           onDelete: onDelete,
           onAddBranchNode: _addBranchNode,
           onEditNode: _editNode,
+          onDeleteBranchNode: _deleteBranchNode,
+          onChanged: _markUnsaved,
         );
     }
   }
@@ -637,23 +557,19 @@ List<String> _getUserLogic() {
   }) async {
     final text = await _showNodeDialog(type);
 
-    if (text == null || text.trim().isEmpty) {
+    if (!mounted || text == null || text.trim().isEmpty) {
       return;
     }
 
-    final node = _FlowNode(
-      type: type,
-      text: text.trim(),
-    );
+    final node = _FlowNode(type: type, text: text.trim());
 
     setState(() {
-      if (insertIndex == null ||
-          insertIndex < 0 ||
-          insertIndex > target.length) {
+      if (insertIndex == null || insertIndex < 0 || insertIndex > target.length) {
         target.add(node);
       } else {
         target.insert(insertIndex, node);
       }
+      _isSaved = false;
     });
   }
 
@@ -661,20 +577,19 @@ List<String> _getUserLogic() {
   // EDIT NODE
   // ============================================================
 
-  Future<void> _editNode(
-    _FlowNode node,
-  ) async {
+  Future<void> _editNode(_FlowNode node) async {
     final text = await _showNodeDialog(
       node.type,
       initialText: node.text,
     );
 
-    if (text == null || text.trim().isEmpty) {
+    if (!mounted || text == null || text.trim().isEmpty) {
       return;
     }
 
     setState(() {
       node.text = text.trim();
+      _isSaved = false;
     });
   }
 
@@ -689,23 +604,15 @@ List<String> _getUserLogic() {
       context: context,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(18),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
       ),
       builder: (context) {
         return SafeArea(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              20,
-              18,
-              20,
-              20,
-            ),
+            padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
                   'TAMBAH BLOK',
@@ -715,17 +622,11 @@ List<String> _getUserLogic() {
                     color: navy,
                   ),
                 ),
-
                 const SizedBox(height: 5),
-
                 const Text(
                   'Pilih jenis langkah yang ingin ditambahkan.',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: textGrey,
-                  ),
+                  style: TextStyle(fontSize: 11, color: textGrey),
                 ),
-
                 const SizedBox(height: 16),
                 _AddMenuItem(
                   title: 'INPUT',
@@ -736,7 +637,6 @@ List<String> _getUserLogic() {
                     onSelected(_LogicType.input);
                   },
                 ),
-
                 _AddMenuItem(
                   title: 'OUTPUT',
                   subtitle: 'Menampilkan hasil',
@@ -746,7 +646,6 @@ List<String> _getUserLogic() {
                     onSelected(_LogicType.output);
                   },
                 ),
-
                 _AddMenuItem(
                   title: 'PROCESS',
                   subtitle: 'Proses atau perhitungan',
@@ -756,7 +655,6 @@ List<String> _getUserLogic() {
                     onSelected(_LogicType.process);
                   },
                 ),
-
                 _AddMenuItem(
                   title: 'DECISION',
                   subtitle: 'Percabangan True / False',
@@ -778,191 +676,221 @@ List<String> _getUserLogic() {
   // NODE INPUT DIALOG
   // ============================================================
 
-Future<String?> _showNodeDialog(
-  _LogicType type, {
-  String initialText = '',
-}) async {
-  final controller = TextEditingController(
-    text: initialText,
-  );
+  Future<String?> _showNodeDialog(
+    _LogicType type, {
+    String initialText = '',
+  }) async {
+    final controller = TextEditingController(text: initialText);
 
-  String title;
-  String hint;
-  String suggestion;
+    String title;
+    String hint;
+    String suggestion;
 
-  switch (type) {
-    case _LogicType.input:
-      title = 'Tambah INPUT';
-      hint = 'Contoh: panjang';
-      suggestion =
-          'Tuliskan data yang ingin dimasukkan.';
-      break;
+    switch (type) {
+      case _LogicType.input:
+        title = 'Tambah INPUT';
+        hint = 'Contoh: panjang';
+        suggestion = 'Tuliskan data yang ingin dimasukkan.';
+        break;
+      case _LogicType.output:
+        title = 'Tambah OUTPUT';
+        hint = 'Contoh: Luas taman';
+        suggestion = 'Tuliskan informasi yang ingin ditampilkan.';
+        break;
+      case _LogicType.process:
+        title = 'Tambah PROCESS';
+        hint = 'Contoh: luas = panjang × lebar';
+        suggestion = 'Tuliskan proses atau perhitungan yang dilakukan.';
+        break;
+      case _LogicType.decision:
+        title = 'Tambah DECISION';
+        hint = 'Contoh: panjang > 0';
+        suggestion = 'Tuliskan kondisi yang menentukan cabang True atau False.';
+        break;
+    }
 
-    case _LogicType.output:
-      title = 'Tambah OUTPUT';
-      hint = 'Contoh: Luas taman';
-      suggestion =
-          'Tuliskan informasi yang ingin ditampilkan.';
-      break;
-
-    case _LogicType.process:
-      title = 'Tambah PROCESS';
-      hint = 'Contoh: luas = panjang × lebar';
-      suggestion =
-          'Tuliskan proses atau perhitungan yang dilakukan.';
-      break;
-
-    case _LogicType.decision:
-      title = 'Tambah DECISION';
-      hint = 'Contoh: panjang > 0';
-      suggestion =
-          'Tuliskan kondisi yang menentukan cabang True atau False.';
-      break;
-  }
-
-  final result = await showDialog<String>(
-    context: context,
-    barrierDismissible: true,
-    builder: (dialogContext) {
-      return AlertDialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w800,
-            color: navy,
+    final result = await showDialog<String>(
+      context: context,
+      barrierDismissible: true,
+      builder: (dialogContext) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              suggestion,
-              style: const TextStyle(
-                fontSize: 11,
-                height: 1.4,
-                color: textGrey,
-              ),
+          title: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: navy,
             ),
-            const SizedBox(height: 14),
-            TextField(
-              controller: controller,
-              autofocus: true,
-              maxLines:
-                  type == _LogicType.process ||
-                          type == _LogicType.decision
-                      ? 2
-                      : 1,
-              textInputAction:
-                  type == _LogicType.process ||
-                          type == _LogicType.decision
-                      ? TextInputAction.newline
-                      : TextInputAction.done,
-              decoration: InputDecoration(
-                hintText: hint,
-                hintStyle: const TextStyle(
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                suggestion,
+                style: const TextStyle(
                   fontSize: 11,
+                  height: 1.4,
                   color: textGrey,
                 ),
-                filled: true,
-                fillColor: const Color(0xFFF7F9FC),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: const BorderSide(
-                    color: borderGrey,
+              ),
+              const SizedBox(height: 14),
+              TextField(
+                controller: controller,
+                autofocus: true,
+                maxLines: type == _LogicType.process || type == _LogicType.decision ? 2 : 1,
+                textInputAction: type == _LogicType.process || type == _LogicType.decision
+                    ? TextInputAction.newline
+                    : TextInputAction.done,
+                decoration: InputDecoration(
+                  hintText: hint,
+                  hintStyle: const TextStyle(fontSize: 11, color: textGrey),
+                  filled: true,
+                  fillColor: const Color(0xFFF7F9FC),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: borderGrey),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: borderGrey),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: navy),
                   ),
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: const BorderSide(
-                    color: borderGrey,
-                  ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text(
+                'BATAL',
+                style: TextStyle(
+                  color: textGrey,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: const BorderSide(
-                    color: navy,
-                  ),
-                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final value = controller.text.trim();
+                if (value.isEmpty) return;
+                Navigator.of(dialogContext).pop(value);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: navy,
+                foregroundColor: Colors.white,
+                elevation: 0,
+              ),
+              child: const Text(
+                'SIMPAN',
+                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800),
               ),
             ),
           ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-            },
-            child: const Text(
-              'BATAL',
-              style: TextStyle(
-                color: textGrey,
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final value = controller.text.trim();
+        );
+      },
+    );
 
-              if (value.isEmpty) {
-                return;
-              }
-
-              Navigator.of(dialogContext).pop(value);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: navy,
-              foregroundColor: Colors.white,
-              elevation: 0,
-            ),
-            child: const Text(
-              'SIMPAN',
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ),
-        ],
-      );
-    },
-  );
-
-  // Beri kesempatan route/dialog menyelesaikan proses
-  // sebelum controller dibuang dan parent melakukan rebuild.
-  await Future<void>.delayed(
-    const Duration(milliseconds: 50),
-  );
-
-  controller.dispose();
-
-  return result;
-}
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    controller.dispose();
+    return result;
+  }
 
   // ============================================================
   // BUTTONS
   // ============================================================
+Widget _buildBottomButtons() {
+  if (_isSaved) {
+    return Row(
+      children: [
+        Expanded(
+          child: SizedBox(
+            height: 48,
+            child: OutlinedButton(
+              onPressed: () {
+                setState(() {
+                  _isSaved = false;
+                });
+              },
+              style: OutlinedButton.styleFrom(
+                foregroundColor: navy,
+                side: const BorderSide(
+                  color: navy,
+                  width: 1.1,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(11),
+                ),
+              ),
+              child: const Text(
+                'EDIT',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: SizedBox(
+            height: 48,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => RunSimulationScreen(
+                      caseData: widget.caseData,
+                      userLogic: _getUserLogic(),
+                    ),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: navy,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(11),
+                ),
+              ),
+              child: const Text(
+                'NEXT',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
-  Widget _buildBottomButtons() {
   return Row(
     children: [
       Expanded(
         child: SizedBox(
           height: 48,
-          child: 
-            OutlinedButton(
-              onPressed: () {
-                setState(() {
-                  _nodes.clear();
-                });
-              },
+          child: OutlinedButton(
+            onPressed: () {
+              setState(() {
+                _nodes.clear();
+                _isSaved = false;
+              });
+            },
             style: OutlinedButton.styleFrom(
               foregroundColor: navy,
               side: const BorderSide(
@@ -983,14 +911,12 @@ Future<String?> _showNodeDialog(
           ),
         ),
       ),
-
       const SizedBox(width: 10),
-
       Expanded(
         child: SizedBox(
           height: 48,
           child: ElevatedButton(
-            onPressed: _checkLogic,
+            onPressed: _saveLogic,
             style: ElevatedButton.styleFrom(
               backgroundColor: navy,
               foregroundColor: Colors.white,
@@ -1025,24 +951,16 @@ class _EmptyFlowHint extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 210,
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 9,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border.all(
-          color: borderGrey,
-        ),
+        border: Border.all(color: borderGrey),
         borderRadius: BorderRadius.circular(8),
       ),
       child: const Text(
         'Tekan panah untuk menambahkan blok.',
         textAlign: TextAlign.center,
-        style: TextStyle(
-          fontSize: 10,
-          color: textGrey,
-        ),
+        style: TextStyle(fontSize: 10, color: textGrey),
       ),
     );
   }
@@ -1071,8 +989,7 @@ class _TerminatorNode extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: navy,
-          borderRadius:
-              BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(24),
           boxShadow: const [
             BoxShadow(
               color: Color(0x16000000),
@@ -1121,23 +1038,12 @@ class _RectangleNode extends StatelessWidget {
         children: [
           Container(
             width: 205,
-            constraints:
-                const BoxConstraints(
-              minHeight: 55,
-            ),
-            padding:
-                const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 10,
-            ),
+            constraints: const BoxConstraints(minHeight: 55),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
               color: color,
-              border: Border.all(
-                color: navy,
-                width: 1,
-              ),
-              borderRadius:
-                  BorderRadius.circular(2),
+              border: Border.all(color: navy, width: 1),
+              borderRadius: BorderRadius.circular(2),
               boxShadow: const [
                 BoxShadow(
                   color: Color(0x10000000),
@@ -1147,39 +1053,27 @@ class _RectangleNode extends StatelessWidget {
               ],
             ),
             child: Column(
-              mainAxisAlignment:
-                  MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   title,
                   style: const TextStyle(
                     fontSize: 8,
-                    fontWeight:
-                        FontWeight.w800,
+                    fontWeight: FontWeight.w800,
                     color: navy,
                     letterSpacing: 0.5,
                   ),
                 ),
-
                 const SizedBox(height: 4),
-
                 Text(
                   text,
-                  textAlign:
-                      TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 10,
-                    color: textDark,
-                    height: 1.25,
-                  ),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 10, color: textDark, height: 1.25),
                 ),
               ],
             ),
           ),
-
-          _DeleteButton(
-            onTap: onDelete,
-          ),
+          _DeleteButton(onTap: onDelete),
         ],
       ),
     );
@@ -1190,8 +1084,7 @@ class _RectangleNode extends StatelessWidget {
 // PARALLELOGRAM NODE
 // ============================================================
 
-class _ParallelogramNode
-    extends StatelessWidget {
+class _ParallelogramNode extends StatelessWidget {
   final String title;
   final String text;
   final Color color;
@@ -1216,71 +1109,46 @@ class _ParallelogramNode
         child: Stack(
           children: [
             ClipPath(
-              clipper:
-                  _ParallelogramClipper(),
+              clipper: _ParallelogramClipper(),
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
                 color: navy,
               ),
             ),
-
             Padding(
-              padding:
-                  const EdgeInsets.all(1),
+              padding: const EdgeInsets.all(1),
               child: ClipPath(
-                clipper:
-                    _ParallelogramClipper(),
+                clipper: _ParallelogramClipper(),
                 child: Container(
                   width: double.infinity,
                   height: double.infinity,
                   color: color,
-                  padding:
-                      const EdgeInsets.symmetric(
-                    horizontal: 25,
-                    vertical: 10,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
                   child: Column(
-                    mainAxisAlignment:
-                        MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         title,
-                        style:
-                            const TextStyle(
+                        style: const TextStyle(
                           fontSize: 8,
-                          fontWeight:
-                              FontWeight.w800,
+                          fontWeight: FontWeight.w800,
                           color: navy,
-                          letterSpacing:
-                              0.5,
+                          letterSpacing: 0.5,
                         ),
                       ),
-
-                      const SizedBox(
-                        height: 4,
-                      ),
-
+                      const SizedBox(height: 4),
                       Text(
                         text,
-                        textAlign:
-                            TextAlign.center,
-                        style:
-                            const TextStyle(
-                          fontSize: 10,
-                          color: textDark,
-                          height: 1.25,
-                        ),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 10, color: textDark, height: 1.25),
                       ),
                     ],
                   ),
                 ),
               ),
             ),
-
-            _DeleteButton(
-              onTap: onDelete,
-            ),
+            _DeleteButton(onTap: onDelete),
           ],
         ),
       ),
@@ -1294,21 +1162,14 @@ class _ParallelogramNode
 
 class _DecisionNode extends StatelessWidget {
   final String text;
-
   final List<_FlowNode> trueBranch;
   final List<_FlowNode> falseBranch;
-
   final VoidCallback onTap;
   final VoidCallback onDelete;
-
-  final Future<void> Function(
-    List<_FlowNode> branch,
-    _LogicType type,
-  ) onAddBranchNode;
-
-  final Future<void> Function(
-    _FlowNode node,
-  ) onEditNode;
+  final Future<void> Function(List<_FlowNode> branch, _LogicType type) onAddBranchNode;
+  final Future<void> Function(_FlowNode node) onEditNode;
+  final void Function(List<_FlowNode> branch, _FlowNode node) onDeleteBranchNode;
+  final VoidCallback onChanged;
 
   const _DecisionNode({
     required this.text,
@@ -1318,6 +1179,8 @@ class _DecisionNode extends StatelessWidget {
     required this.onDelete,
     required this.onAddBranchNode,
     required this.onEditNode,
+    required this.onDeleteBranchNode,
+    required this.onChanged,
   });
 
   @override
@@ -1335,16 +1198,11 @@ class _DecisionNode extends StatelessWidget {
                   width: 105,
                   height: 105,
                   decoration: BoxDecoration(
-                    color:
-                        const Color(0xFFF7D5D5),
-                    border: Border.all(
-                      color: navy,
-                      width: 1,
-                    ),
+                    color: const Color(0xFFF7D5D5),
+                    border: Border.all(color: navy, width: 1),
                     boxShadow: const [
                       BoxShadow(
-                        color:
-                            Color(0x10000000),
+                        color: Color(0x10000000),
                         blurRadius: 4,
                         offset: Offset(0, 2),
                       ),
@@ -1352,7 +1210,6 @@ class _DecisionNode extends StatelessWidget {
                   ),
                 ),
               ),
-
               SizedBox(
                 width: 135,
                 child: Text(
@@ -1360,27 +1217,21 @@ class _DecisionNode extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 10,
-                    fontWeight:
-                        FontWeight.w700,
+                    fontWeight: FontWeight.w700,
                     color: textDark,
                     height: 1.25,
                   ),
                 ),
               ),
-
               Positioned(
                 right: 5,
                 top: 4,
-                child: _DeleteButton(
-                  onTap: onDelete,
-                ),
+                child: _DeleteButton(onTap: onDelete),
               ),
             ],
           ),
         ),
-
         const SizedBox(height: 12),
-
         _buildBranches(context),
       ],
     );
@@ -1390,44 +1241,35 @@ class _DecisionNode extends StatelessWidget {
   // BRANCHES
   // ============================================================
 
-  Widget _buildBranches(
-    BuildContext context,
-  ) {
+  Widget _buildBranches(BuildContext context) {
     return Row(
-      crossAxisAlignment:
-          CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           child: _BranchColumn(
             label: 'FALSE',
-            labelAlignment:
-                Alignment.centerLeft,
+            labelAlignment: Alignment.centerLeft,
             nodes: falseBranch,
-            onAdd: () {
-              _showBranchAddMenu(
-                context,
-                falseBranch,
-              );
+            onAdd: () => _showBranchAddMenu(context, falseBranch),
+            onEdit: onEditNode,
+            onDelete: (node) {
+              onDeleteBranchNode(falseBranch, node);
+              onChanged();
             },
-            onChanged: () {},
           ),
         ),
-
         const SizedBox(width: 8),
-
         Expanded(
           child: _BranchColumn(
             label: 'TRUE',
-            labelAlignment:
-                Alignment.centerRight,
+            labelAlignment: Alignment.centerRight,
             nodes: trueBranch,
-            onAdd: () {
-              _showBranchAddMenu(
-                context,
-                trueBranch,
-              );
+            onAdd: () => _showBranchAddMenu(context, trueBranch),
+            onEdit: onEditNode,
+            onDelete: (node) {
+              onDeleteBranchNode(trueBranch, node);
+              onChanged();
             },
-            onChanged: () {},
           ),
         ),
       ],
@@ -1438,41 +1280,29 @@ class _DecisionNode extends StatelessWidget {
   // BRANCH ADD MENU
   // ============================================================
 
-  void _showBranchAddMenu(
-    BuildContext context,
-    List<_FlowNode> branch,
-  ) {
+  void _showBranchAddMenu(BuildContext context, List<_FlowNode> branch) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
-      shape:
-          const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.vertical(
-          top: Radius.circular(18),
-        ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
       ),
       builder: (context) {
         return SafeArea(
           child: Padding(
-            padding:
-                const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Column(
-              mainAxisSize:
-                  MainAxisSize.min,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const Text(
                   'TAMBAH KE CABANG',
                   style: TextStyle(
                     fontSize: 13,
-                    fontWeight:
-                        FontWeight.w800,
+                    fontWeight: FontWeight.w800,
                     color: navy,
                   ),
                 ),
-
                 const SizedBox(height: 14),
-
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -1480,42 +1310,22 @@ class _DecisionNode extends StatelessWidget {
                     _SmallTypeButton(
                       text: 'INPUT',
                       onTap: () {
-                        Navigator.pop(
-                          context,
-                        );
-
-                        onAddBranchNode(
-                          branch,
-                          _LogicType.input,
-                        );
+                        Navigator.pop(context);
+                        onAddBranchNode(branch, _LogicType.input);
                       },
                     ),
-
                     _SmallTypeButton(
                       text: 'OUTPUT',
                       onTap: () {
-                        Navigator.pop(
-                          context,
-                        );
-
-                        onAddBranchNode(
-                          branch,
-                          _LogicType.output,
-                        );
+                        Navigator.pop(context);
+                        onAddBranchNode(branch, _LogicType.output);
                       },
                     ),
-
                     _SmallTypeButton(
                       text: 'PROCESS',
                       onTap: () {
-                        Navigator.pop(
-                          context,
-                        );
-
-                        onAddBranchNode(
-                          branch,
-                          _LogicType.process,
-                        );
+                        Navigator.pop(context);
+                        onAddBranchNode(branch, _LogicType.process);
                       },
                     ),
                   ],
@@ -1533,20 +1343,21 @@ class _DecisionNode extends StatelessWidget {
 // BRANCH COLUMN
 // ============================================================
 
-class _BranchColumn
-    extends StatelessWidget {
+class _BranchColumn extends StatelessWidget {
   final String label;
   final Alignment labelAlignment;
   final List<_FlowNode> nodes;
   final VoidCallback onAdd;
-  final VoidCallback onChanged;
+  final Future<void> Function(_FlowNode node) onEdit;
+  final ValueChanged<_FlowNode> onDelete;
 
   const _BranchColumn({
     required this.label,
     required this.labelAlignment,
     required this.nodes,
     required this.onAdd,
-    required this.onChanged,
+    required this.onEdit,
+    required this.onDelete,
   });
 
   @override
@@ -1564,76 +1375,59 @@ class _BranchColumn
             ),
           ),
         ),
-
         const SizedBox(height: 5),
-
-        _BranchArrow(
-          onTap: onAdd,
-        ),
-
+        _BranchArrow(onTap: onAdd),
         if (nodes.isEmpty)
           GestureDetector(
             onTap: onAdd,
             child: Container(
               width: double.infinity,
-              padding:
-                  const EdgeInsets.symmetric(
-                vertical: 12,
-                horizontal: 8,
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
               decoration: BoxDecoration(
                 color: Colors.white,
-                border: Border.all(
-                  color: borderGrey,
-                ),
-                borderRadius:
-                    BorderRadius.circular(6),
+                border: Border.all(color: borderGrey),
+                borderRadius: BorderRadius.circular(6),
               ),
               child: const Text(
                 'Tekan panah untuk menambah',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 8,
-                  color: textGrey,
-                ),
+                style: TextStyle(fontSize: 8, color: textGrey),
               ),
             ),
           )
         else
           ...nodes.map(
             (node) => Padding(
-              padding:
-                  const EdgeInsets.only(
-                bottom: 7,
-              ),
-              child: _buildBranchNode(
-                context,
-                node,
-              ),
+              padding: const EdgeInsets.only(bottom: 7),
+              child: _buildBranchNode(node),
             ),
           ),
       ],
     );
   }
 
-  Widget _buildBranchNode(
-    BuildContext context,
-    _FlowNode node,
-  ) {
-    final state =
-        context.findAncestorStateOfType<
-            _LogicBuilderScreenState>();
-
-    if (state == null) {
-      return const SizedBox.shrink();
-    }
-
+  Widget _buildBranchNode(_FlowNode node) {
     return GestureDetector(
-      onTap: () {
-        state._editNode(node);
-      },
-      child: _MiniFlowNode(
-        node: node,
+      onTap: () => onEdit(node),
+      child: Stack(
+        children: [
+          _MiniFlowNode(node: node),
+          Positioned(
+            right: 1,
+            top: 1,
+            child: GestureDetector(
+              onTap: () => onDelete(node),
+              behavior: HitTestBehavior.opaque,
+              child: const SizedBox(
+                width: 19,
+                height: 19,
+                child: Center(
+                  child: Icon(Icons.close_rounded, size: 12, color: textGrey),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -1643,13 +1437,10 @@ class _BranchColumn
 // MINI FLOW NODE
 // ============================================================
 
-class _MiniFlowNode
-    extends StatelessWidget {
+class _MiniFlowNode extends StatelessWidget {
   final _FlowNode node;
 
-  const _MiniFlowNode({
-    required this.node,
-  });
+  const _MiniFlowNode({required this.node});
 
   @override
   Widget build(BuildContext context) {
@@ -1659,40 +1450,29 @@ class _MiniFlowNode
       case _LogicType.input:
         color = const Color(0xFFDDEAFF);
         break;
-
       case _LogicType.output:
         color = const Color(0xFFD8F7D8);
         break;
-
       case _LogicType.process:
         color = const Color(0xFFFFF0B8);
         break;
-
       default:
         color = Colors.white;
     }
 
-    if (node.type == _LogicType.input ||
-        node.type == _LogicType.output) {
+    if (node.type == _LogicType.input || node.type == _LogicType.output) {
       return SizedBox(
         height: 56,
         child: ClipPath(
-          clipper:
-              _ParallelogramClipper(),
+          clipper: _ParallelogramClipper(),
           child: Container(
             color: color,
             alignment: Alignment.center,
-            padding:
-                const EdgeInsets.symmetric(
-              horizontal: 15,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Text(
               node.text,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 8,
-                color: textDark,
-              ),
+              style: const TextStyle(fontSize: 8, color: textDark),
             ),
           ),
         ),
@@ -1700,35 +1480,21 @@ class _MiniFlowNode
     }
 
     return Container(
-      constraints:
-          const BoxConstraints(
-        minHeight: 52,
-      ),
+      constraints: const BoxConstraints(minHeight: 52),
       alignment: Alignment.center,
-      padding:
-          const EdgeInsets.symmetric(
-        horizontal: 8,
-        vertical: 8,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
         color: color,
-        border: Border.all(
-          color: navy,
-          width: 0.8,
-        ),
+        border: Border.all(color: navy, width: 0.8),
       ),
       child: Text(
         node.text,
         textAlign: TextAlign.center,
-        style: const TextStyle(
-          fontSize: 8,
-          color: textDark,
-        ),
+        style: const TextStyle(fontSize: 8, color: textDark),
       ),
     );
   }
 }
-
 
 // ============================================================
 // CONNECTOR
@@ -1737,9 +1503,7 @@ class _MiniFlowNode
 class _Connector extends StatelessWidget {
   final VoidCallback onTap;
 
-  const _Connector({
-    required this.onTap,
-  });
+  const _Connector({required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -1752,26 +1516,12 @@ class _Connector extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 1.4,
-              height: 27,
-              color: navy,
-            ),
-
-            CustomPaint(
-              size: const Size(10, 7),
-              painter: _ArrowHeadPainter(),
-            ),
-
+            Container(width: 1.4, height: 27, color: navy),
+            CustomPaint(size: const Size(10, 7), painter: _ArrowHeadPainter()),
             const SizedBox(height: 2),
-
             const Text(
               'tap',
-              style: TextStyle(
-                fontSize: 7,
-                height: 1.0,
-                color: textGrey,
-              ),
+              style: TextStyle(fontSize: 7, height: 1.0, color: textGrey),
             ),
           ],
         ),
@@ -1784,13 +1534,10 @@ class _Connector extends StatelessWidget {
 // BRANCH CONNECTOR
 // ============================================================
 
-class _BranchArrow
-    extends StatelessWidget {
+class _BranchArrow extends StatelessWidget {
   final VoidCallback onTap;
 
-  const _BranchArrow({
-    required this.onTap,
-  });
+  const _BranchArrow({required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -1802,17 +1549,8 @@ class _BranchArrow
         width: 35,
         child: Column(
           children: [
-            Container(
-              width: 1,
-              height: 19,
-              color: navy,
-            ),
-
-            CustomPaint(
-              size: const Size(8, 6),
-              painter:
-                  _ArrowHeadPainter(),
-            ),
+            Container(width: 1, height: 19, color: navy),
+            CustomPaint(size: const Size(8, 6), painter: _ArrowHeadPainter()),
           ],
         ),
       ),
@@ -1824,8 +1562,7 @@ class _BranchArrow
 // ADD MENU ITEM
 // ============================================================
 
-class _AddMenuItem
-    extends StatelessWidget {
+class _AddMenuItem extends StatelessWidget {
   final String title;
   final String subtitle;
   final Color color;
@@ -1842,26 +1579,15 @@ class _AddMenuItem
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius:
-          BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(10),
       child: Container(
         width: double.infinity,
-        margin:
-            const EdgeInsets.only(
-          bottom: 7,
-        ),
-        padding:
-            const EdgeInsets.symmetric(
-          horizontal: 13,
-          vertical: 10,
-        ),
+        margin: const EdgeInsets.only(bottom: 7),
+        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.45),
-          border: Border.all(
-            color: borderGrey,
-          ),
-          borderRadius:
-              BorderRadius.circular(10),
+          border: Border.all(color: borderGrey),
+          borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
           children: [
@@ -1871,51 +1597,35 @@ class _AddMenuItem
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: color,
-                border: Border.all(
-                  color: navy,
-                  width: 0.7,
-                ),
-                borderRadius:
-                    BorderRadius.circular(6),
+                border: Border.all(color: navy, width: 0.7),
+                borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
                 title.substring(0, 1),
                 style: const TextStyle(
                   fontSize: 12,
-                  fontWeight:
-                      FontWeight.w800,
+                  fontWeight: FontWeight.w800,
                   color: navy,
                 ),
               ),
             ),
-
             const SizedBox(width: 11),
-
             Expanded(
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style:
-                        const TextStyle(
+                    style: const TextStyle(
                       fontSize: 11,
-                      fontWeight:
-                          FontWeight.w800,
+                      fontWeight: FontWeight.w800,
                       color: navy,
                     ),
                   ),
-
                   const SizedBox(height: 2),
-
                   Text(
                     subtitle,
-                    style:
-                        const TextStyle(
-                      fontSize: 9,
-                      color: textGrey,
-                    ),
+                    style: const TextStyle(fontSize: 9, color: textGrey),
                   ),
                 ],
               ),
@@ -1931,8 +1641,7 @@ class _AddMenuItem
 // SMALL TYPE BUTTON
 // ============================================================
 
-class _SmallTypeButton
-    extends StatelessWidget {
+class _SmallTypeButton extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
 
@@ -1945,29 +1654,19 @@ class _SmallTypeButton
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius:
-          BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(8),
       child: Container(
-        padding:
-            const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 10,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         decoration: BoxDecoration(
-          color:
-              const Color(0xFFF7F9FC),
-          border: Border.all(
-            color: borderGrey,
-          ),
-          borderRadius:
-              BorderRadius.circular(8),
+          color: const Color(0xFFF7F9FC),
+          border: Border.all(color: borderGrey),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
           text,
           style: const TextStyle(
             fontSize: 9,
-            fontWeight:
-                FontWeight.w800,
+            fontWeight: FontWeight.w800,
             color: navy,
           ),
         ),
@@ -1980,13 +1679,10 @@ class _SmallTypeButton
 // DELETE BUTTON
 // ============================================================
 
-class _DeleteButton
-    extends StatelessWidget {
+class _DeleteButton extends StatelessWidget {
   final VoidCallback onTap;
 
-  const _DeleteButton({
-    required this.onTap,
-  });
+  const _DeleteButton({required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -2000,11 +1696,7 @@ class _DeleteButton
           width: 24,
           height: 24,
           child: Center(
-            child: Icon(
-              Icons.close_rounded,
-              size: 15,
-              color: textGrey,
-            ),
+            child: Icon(Icons.close_rounded, size: 15, color: textGrey),
           ),
         ),
       ),
@@ -2016,8 +1708,7 @@ class _DeleteButton
 // HINT ROW
 // ============================================================
 
-class _HintRow
-    extends StatelessWidget {
+class _HintRow extends StatelessWidget {
   final String label;
   final String text;
 
@@ -2029,8 +1720,7 @@ class _HintRow
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment:
-          CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
           width: 50,
@@ -2038,21 +1728,15 @@ class _HintRow
             label,
             style: const TextStyle(
               fontSize: 8,
-              fontWeight:
-                  FontWeight.w800,
+              fontWeight: FontWeight.w800,
               color: navy,
             ),
           ),
         ),
-
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(
-              fontSize: 9,
-              height: 1.35,
-              color: textGrey,
-            ),
+            style: const TextStyle(fontSize: 9, height: 1.35, color: textGrey),
           ),
         ),
       ],
@@ -2060,145 +1744,93 @@ class _HintRow
   }
 }
 
-  // ============================================================
-  // PROGRESS NUMBER
-  // ============================================================
+// ============================================================
+// PROGRESS NUMBER
+// ============================================================
 
-  class _ProgressNumber extends StatelessWidget {
-    final String number;
-    final bool active;
-    final bool enabled;
-    final VoidCallback? onTap;
+class _ProgressNumber extends StatelessWidget {
+  final String number;
+  final bool active;
+  final bool enabled;
+  final VoidCallback? onTap;
 
-    const _ProgressNumber({
-      required this.number,
-      required this.active,
-      required this.enabled,
-      required this.onTap,
-    });
+  const _ProgressNumber({
+    required this.number,
+    required this.active,
+    required this.enabled,
+    required this.onTap,
+  });
 
-    @override
-    Widget build(BuildContext context) {
-      return InkWell(
-        onTap: enabled ? onTap : null,
-        borderRadius: BorderRadius.circular(9),
-        child: Container(
-          width: 30,
-          height: 30,
-          decoration: BoxDecoration(
-            color: active || enabled
-                ? navy
-                : Colors.white,
-            border: Border.all(
-              color: active || enabled
-                  ? navy
-                  : borderGrey,
-            ),
-            borderRadius: BorderRadius.circular(9),
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: enabled ? onTap : null,
+      borderRadius: BorderRadius.circular(9),
+      child: Container(
+        width: 30,
+        height: 30,
+        decoration: BoxDecoration(
+          color: active || enabled ? navy : Colors.white,
+          border: Border.all(
+            color: active || enabled ? navy : borderGrey,
           ),
-          child: Center(
-            child: Text(
-              number,
-              style: TextStyle(
-                color: active || enabled
-                    ? Colors.white
-                    : textGrey,
-                fontSize: 12,
-                fontWeight: FontWeight.w800,
-              ),
+          borderRadius: BorderRadius.circular(9),
+        ),
+        child: Center(
+          child: Text(
+            number,
+            style: TextStyle(
+              color: active || enabled ? Colors.white : textGrey,
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
             ),
           ),
         ),
-      );
-    }
+      ),
+    );
   }
+}
 
 // ============================================================
 // PARALLELOGRAM CLIPPER
 // ============================================================
 
-class _ParallelogramClipper
-    extends CustomClipper<Path> {
+class _ParallelogramClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     const slant = 18.0;
-
     final path = Path();
-
     path.moveTo(slant, 0);
-
-    path.lineTo(
-      size.width,
-      0,
-    );
-
-    path.lineTo(
-      size.width - slant,
-      size.height,
-    );
-
-    path.lineTo(
-      0,
-      size.height,
-    );
-
+    path.lineTo(size.width, 0);
+    path.lineTo(size.width - slant, size.height);
+    path.lineTo(0, size.height);
     path.close();
-
     return path;
   }
 
   @override
-  bool shouldReclip(
-    CustomClipper<Path> oldClipper,
-  ) {
-    return false;
-  }
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
 
 // ============================================================
 // ARROW HEAD
 // ============================================================
 
-class _ArrowHeadPainter
-    extends CustomPainter {
+class _ArrowHeadPainter extends CustomPainter {
   @override
-  void paint(
-    Canvas canvas,
-    Size size,
-  ) {
+  void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = navy
       ..style = PaintingStyle.fill;
 
     final path = Path();
-
-    path.moveTo(
-      0,
-      0,
-    );
-
-    path.lineTo(
-      size.width,
-      0,
-    );
-
-    path.lineTo(
-      size.width / 2,
-      size.height,
-    );
-
+    path.moveTo(0, 0);
+    path.lineTo(size.width, 0);
+    path.lineTo(size.width / 2, size.height);
     path.close();
-
-    canvas.drawPath(
-      path,
-      paint,
-    );
+    canvas.drawPath(path, paint);
   }
 
   @override
-  bool shouldRepaint(
-    CustomPainter oldDelegate,
-  ) {
-    return false;
-  }
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
