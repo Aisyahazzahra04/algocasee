@@ -3,6 +3,7 @@ import 'app_shell.dart';
 import '../main.dart';
 import '../models/case_model.dart';
 import 'run_simulation_screen.dart';
+import '../logic/logic_checker.dart';
 
 import 'problem_analysis_screen.dart';
 import 'information_identification_screen.dart';
@@ -69,6 +70,155 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
       _isEditing = false;
     });
   }
+
+  // Pemeriksaan
+    Future<void> _checkBeforeNext() async {
+    if (_nodes.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Tambahkan blok logika terlebih dahulu.'),
+        ),
+      );
+      return;
+    }
+
+    // Tampilkan overlay pemeriksaan
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return const AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 18),
+              Expanded(
+                child: Text('Memeriksa logika kamu...'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    // Memberi waktu agar overlay sempat tampil
+    await Future.delayed(const Duration(milliseconds: 700));
+
+    if (!mounted) return;
+
+    // Periksa susunan logika
+    final result = LogicChecker.check(
+      caseData: widget.caseData,
+      userLogic: _getUserLogic(),
+    );
+
+    // Tutup overlay loading
+    Navigator.of(context, rootNavigator: true).pop();
+
+    if (!mounted) return;
+
+    if (!result.isCorrect) {
+      // Tampilkan daftar kesalahan
+      _showLogicError(result.messages);
+      return;
+    }
+
+    // Jika semua benar, lanjut ke Run Simulation
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => RunSimulationScreen(
+          caseData: widget.caseData,
+          userLogic: _getUserLogic(),
+        ),
+      ),
+    );
+  }
+  
+  //overlay
+  void _showLogicError(List<String> messages) {
+  showDialog<void>(
+    context: context,
+    builder: (dialogContext) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: const Row(
+          children: [
+            Icon(
+              Icons.error_outline_rounded,
+              color: error,
+            ),
+            SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'Logika Perlu Diperbaiki',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: error,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Masih ditemukan beberapa kesalahan:',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: textGrey,
+                ),
+              ),
+              const SizedBox(height: 14),
+              ...messages.map(
+                (message) => Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(
+                        Icons.circle,
+                        size: 7,
+                        color: error,
+                      ),
+                      const SizedBox(width: 9),
+                      Expanded(
+                        child: Text(
+                          message,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            height: 1.4,
+                            color: textDark,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: navy,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('PERBAIKI LOGIKA'),
+          ),
+        ],
+      );
+    },
+  );
+}
 
   // ============================================================
   // GET USER LOGIC
@@ -856,17 +1006,8 @@ Widget _buildBottomButtons() {
           child: SizedBox(
             height: 48,
             child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => RunSimulationScreen(
-                      caseData: widget.caseData,
-                      userLogic: _getUserLogic(),
-                    ),
-                  ),
-                );
-              },
+              //cek dulu
+              onPressed: _checkBeforeNext,
               style: ElevatedButton.styleFrom(
                 backgroundColor: navy,
                 foregroundColor: Colors.white,

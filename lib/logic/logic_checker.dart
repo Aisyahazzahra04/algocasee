@@ -3,10 +3,12 @@ import '../models/case_model.dart';
 class LogicCheckResult {
   final bool isCorrect;
   final List<String> messages;
+  final List<int> errorIndices;
 
   LogicCheckResult({
     required this.isCorrect,
     required this.messages,
+    this.errorIndices = const [],
   });
 }
 
@@ -27,35 +29,30 @@ class LogicChecker {
         .toList();
 
     final errors = <String>[];
+    final errorIndices = <int>[];
 
     // ============================================================
     // 1. CEK JUMLAH BLOK
     // ============================================================
 
     if (user.length != expected.length) {
-      errors.add(
-        'Jumlah blok logika belum sesuai.',
-      );
-    }
+      errors.add('Jumlah blok logika belum sesuai.');
 
-    // ============================================================
-    // 2. CEK START
-    // ============================================================
+      final differentLength = user.length < expected.length
+          ? user.length
+          : expected.length;
 
-    if (user.isEmpty || user.first != 'start') {
-      errors.add(
-        'Alur logika harus dimulai dengan START.',
-      );
-    }
+      for (int i = 0; i < differentLength; i++) {
+        if (!_isEquivalent(user[i], expected[i])) {
+          errorIndices.add(i);
+        }
+      }
 
-    // ============================================================
-    // 3. CEK END
-    // ============================================================
-
-    if (user.isEmpty || user.last != 'end') {
-      errors.add(
-        'Alur logika harus diakhiri dengan END.',
-      );
+      if (user.length > expected.length) {
+        for (int i = expected.length; i < user.length; i++) {
+          errorIndices.add(i);
+        }
+      }
     }
 
     // ============================================================
@@ -78,6 +75,8 @@ class LogicChecker {
         errors.add(
           'Blok ke-${i + 1} belum sesuai.',
         );
+
+        errorIndices.add(i);
       }
     }
 
@@ -140,6 +139,7 @@ class LogicChecker {
     return LogicCheckResult(
       isCorrect: false,
       messages: errors,
+      errorIndices: errorIndices.toSet().toList(),
     );
   }
 
