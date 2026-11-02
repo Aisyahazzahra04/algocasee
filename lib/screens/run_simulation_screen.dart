@@ -515,29 +515,45 @@ class _RunSimulationScreenState extends State<RunSimulationScreen> {
   }
 
   // SIMPAN PROGRESS
-  Future<void> _saveCaseProgress() async {
-  final database = DatabaseService.instance;
-  final user = await database.getUser();
+    int get _currentCaseNumber {
+    final match = RegExp(r'(\d+)$').firstMatch(widget.caseData.id);
 
-  if (user == null || user.id == null) {
-  throw Exception('Data pengguna tidak ditemukan.');
+    if (match == null) {
+      throw FormatException('ID Case tidak valid: ${widget.caseData.id}');
+    }
+
+    return int.parse(match.group(1)!);
   }
 
-  await database.saveProgress(
-    userId: user.id!,
-    caseId: '01',
-    status: 'Completed',
-    currentStep: '5',
-    tanggalSelesai: DateTime.now().toIso8601String(),
-  );
+  Future<void> _saveCaseProgress() async {
+    final database = DatabaseService.instance;
+    final user = await database.getUser();
 
-  await database.saveProgress(
-    userId: user.id!,
-    caseId: '02',
-    status: 'Available',
-    currentStep: '1',
-  );
-}
+    if (user == null || user.id == null) {
+      throw Exception('Data pengguna tidak ditemukan.');
+    }
+
+    final currentCaseNumber = _currentCaseNumber;
+    final currentCaseId = currentCaseNumber.toString().padLeft(2, '0');
+    final nextCaseNumber = currentCaseNumber + 1;
+
+    await database.saveProgress(
+      userId: user.id!,
+      caseId: currentCaseId,
+      status: 'Completed',
+      currentStep: '5',
+      tanggalSelesai: DateTime.now().toIso8601String(),
+    );
+
+    if (nextCaseNumber <= 5) {
+      await database.saveProgress(
+        userId: user.id!,
+        caseId: nextCaseNumber.toString().padLeft(2, '0'),
+        status: 'Available',
+        currentStep: '1',
+      );
+    }
+  }
 
 
   // RESULT OVERLAY
@@ -662,43 +678,16 @@ class _RunSimulationScreenState extends State<RunSimulationScreen> {
         ],
       );
 
-  void _showFinishDialog() {
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-        child: Padding(
-          padding: const EdgeInsets.all(23),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.verified_rounded, color: success, size: 58),
-              const SizedBox(height: 12),
-              const Text('Case Selesai!', style: TextStyle(fontSize: 21, fontWeight: FontWeight.w900, color: navy)),
-              const SizedBox(height: 8),
-              const Text(
-                'Kamu berhasil menyelesaikan test case ini. Case ditandai selesai selama sesi ini.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, height: 1.5, color: textGrey),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(dialogContext),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: navy,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: const Text('SELESAI', style: TextStyle(fontWeight: FontWeight.w800)),
-                ),
-              ),
-            ],
-          ),
+    void _showFinishDialog() {
+    final currentCaseNumber = _currentCaseNumber;
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CaseCompletionScreen(
+          completedCaseNumber: currentCaseNumber,
+          nextCaseNumber:
+              currentCaseNumber < 5 ? currentCaseNumber + 1 : null,
         ),
       ),
     );
@@ -852,6 +841,210 @@ class _RunSimulationScreenState extends State<RunSimulationScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// COMPLETE
+class CaseCompletionScreen extends StatelessWidget {
+  final int completedCaseNumber;
+  final int? nextCaseNumber;
+
+  const CaseCompletionScreen({
+    super.key,
+    required this.completedCaseNumber,
+    required this.nextCaseNumber,
+  });
+
+  void _goToCases(BuildContext context) {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const AppShell(initialIndex: 1),
+      ),
+      (route) => false,
+    );
+  }
+
+  void _goToHome(BuildContext context) {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const AppShell(initialIndex: 0),
+      ),
+      (route) => false,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final completedId = completedCaseNumber.toString().padLeft(2, '0');
+    final nextId = nextCaseNumber?.toString().padLeft(2, '0');
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF7F9FC),
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              children: [
+                const Icon(
+                  Icons.emoji_events_rounded,
+                  color: success,
+                  size: 75,
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'CASE COMPLETED!',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w900,
+                    color: navy,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Kamu berhasil menyelesaikan Case $completedId!',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: textGrey,
+                  ),
+                ),
+                const SizedBox(height: 30),
+
+                // CASE SELESAI
+                _statusCard(
+                  title: 'CASE $completedId',
+                  subtitle: 'Berhasil diselesaikan',
+                  status: 'COMPLETED',
+                  icon: Icons.check_circle_rounded,
+                  color: success,
+                  background: const Color(0xFFEAF8F0),
+                ),
+
+                if (nextId != null) ...[
+                  const SizedBox(height: 13),
+
+                  // CASE BERIKUTNYA
+                  _statusCard(
+                    title: 'CASE $nextId',
+                    subtitle: 'Case berikutnya sudah terbuka',
+                    status: 'UNLOCKED',
+                    icon: Icons.lock_open_rounded,
+                    color: const Color(0xFF2878D0),
+                    background: const Color(0xFFEAF2FF),
+                  ),
+                  const SizedBox(height: 30),
+
+                  SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: ElevatedButton.icon(
+                      onPressed: () => _goToCases(context),
+                      icon: const Icon(Icons.arrow_forward_rounded),
+                      label: const Text('NEXT CASE'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: teal,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                    ),
+                  ),
+                ] else ...[
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Selamat! Kamu telah menyelesaikan seluruh Case di AlgoCase.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: textGrey,
+                    ),
+                  ),
+                ],
+
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: OutlinedButton.icon(
+                    onPressed: () => _goToHome(context),
+                    icon: const Icon(Icons.home_rounded),
+                    label: const Text('BACK TO HOME'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: navy,
+                      side: const BorderSide(color: borderGrey),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _statusCard({
+    required String title,
+    required String subtitle,
+    required String status,
+    required IconData icon,
+    required Color color,
+    required Color background,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: color.withValues(alpha: .2)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 30),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: color,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    color: textGrey,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            status,
+            style: TextStyle(
+              color: color,
+              fontSize: 9,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ],
       ),
     );
   }
