@@ -1,0 +1,128 @@
+
+{
+  "id": "case_02",
+  "title": "Menghitung Sisa Uang Jajan",
+  "difficulty": "Easy",
+
+  "briefing": {
+    "description": "Seorang siswa memiliki uang jajan sebesar Rp15.000. Ia menggunakan Rp5.000 untuk membeli makanan di kantin sekolah. Bantulah siswa tersebut menghitung sisa uang jajannya.",
+    "mission": "Buatlah langkah-langkah logika untuk menghitung sisa uang jajan siswa.",
+    "rules": [
+      "Gunakan informasi yang tersedia dalam soal.",
+      "Hitung sisa uang dengan operasi pengurangan."
+    ],
+    "facts": [
+      {
+        "label": "Uang awal",
+        "value": "Rp15.000"
+      },
+      {
+        "label": "Uang digunakan",
+        "value": "Rp5.000"
+      }
+    ]
+  },
+
+  "problem_analysis": {
+    "question": "Apa yang harus dilakukan untuk mengetahui sisa uang jajan siswa?",
+    "options": [
+      "Menjumlahkan uang awal dengan uang yang digunakan",
+      "Mengurangi uang awal dengan uang yang digunakan",
+      "Mengalikan uang awal dengan uang yang digunakan",
+      "Membagi uang awal dengan uang yang digunakan"
+    ],
+    "correct_answer": 1,
+    "feedback_correct": "Benar! Untuk mengetahui sisa uang, kita perlu mengurangi uang awal dengan uang yang digunakan.",
+    "feedback_wrong": "Belum tepat. Ingat, untuk menghitung sisa uang, gunakan operasi pengurangan."
+  },
+
+  "information_identification": {
+    "question": "Informasi apa saja yang diperlukan untuk menghitung sisa uang jajan?",
+    "information": [
+      {
+        "text": "Uang awal sebesar Rp15.000",
+        "relevant": true
+      },
+      {
+        "text": "Uang yang digunakan sebesar Rp5.000",
+        "relevant": true
+      },
+      {
+        "text": "Warna makanan yang dibeli",
+        "relevant": false
+      },
+      {
+        "text": "Nama kantin sekolah",
+        "relevant": false
+      }
+    ]
+  },
+
+  "input_output_rules": {
+    "input": {
+      "question": "Data apa saja yang menjadi input dalam masalah ini?",
+      "options": [
+        "Uang awal dan uang yang digunakan",
+        "Nama siswa dan nama kantin",
+        "Warna makanan dan harga makanan"
+      ],
+      "correct_answer": 0
+    },
+
+    "output": {
+      "question": "Apa hasil yang ingin diketahui dari masalah ini?",
+      "options": [
+        "Jumlah uang awal",
+        "Jumlah uang yang digunakan",
+        "Sisa uang jajan"
+      ],
+      "correct_answer": 2
+    },
+
+    "rules": {
+      "question": "Aturan apa yang tepat untuk menghitung sisa uang jajan?",
+      "options": [
+        "Sisa uang = uang awal - uang yang digunakan",
+        "Sisa uang = uang awal + uang yang digunakan",
+        "Sisa uang = uang awal × uang yang digunakan"
+      ],
+      "correct_answers": [
+        0
+      ]
+    }
+  },
+
+  "logic_builder": {
+    "available_blocks": [
+      "START",
+      "INPUT uang_awal",
+      "INPUT uang_digunakan",
+      "PROCESS sisa_uang = uang_awal - uang_digunakan",
+      "OUTPUT sisa_uang",
+      "END"
+    ],
+    "expected_logic": [
+      "START",
+      "INPUT uang_awal",
+      "INPUT uang_digunakan",
+      "PROCESS sisa_uang = uang_awal - uang_digunakan",
+      "OUTPUT sisa_uang",
+      "END"
+    ]
+  },
+
+  "test_cases": [
+    {
+      "input": {
+        "uang_awal": 15000,
+        "uang_digunakan": 5000
+      },
+      "expected_result": 10000
+    }
+  ],
+
+  "feedback": {
+    "correct": "Hebat! Kamu berhasil menghitung sisa uang jajan dengan benar.",
+    "wrong": "Belum tepat. Ingat, untuk menghitung sisa uang, kurangi uang awal dengan uang yang digunakan."
+  }
+}

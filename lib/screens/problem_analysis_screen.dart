@@ -26,6 +26,8 @@ class _ProblemAnalysisScreenState
     extends State<ProblemAnalysisScreen> {
   int? selectedAnswer;
   bool submitted = false;
+  String get currentCaseId =>
+    widget.caseData.id.replaceFirst('case_', '');
     @override
   void initState() {
     super.initState();
@@ -43,7 +45,7 @@ class _ProblemAnalysisScreenState
 
       final saved = await DatabaseService.instance.getAnswer(
         userId: userId,
-        caseId: '01',
+        caseId: currentCaseId,
         stepId: 'problem_analysis',
       );
 
@@ -71,7 +73,7 @@ class _ProblemAnalysisScreenState
 
     await DatabaseService.instance.saveAnswer(
       userId: userId,
-      caseId: '01',
+      caseId: currentCaseId,
       stepId: 'problem_analysis',
       answer: jsonEncode({
         'selectedAnswer': selectedAnswer,

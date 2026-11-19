@@ -61,47 +61,50 @@ class CasesScreen extends StatelessWidget {
 
             // DAFTAR CASE
             Expanded(
-              child: FutureBuilder<CaseModel>(
-                future: CaseService.loadCase01(),
+              child: FutureBuilder<List<CaseModel>>(
+                future: Future.wait([
+                  CaseService.loadCase01(),
+                  CaseService.loadCase02(),
+                ]),
                 builder: (context, snapshot) {
-                  // SAAT DATA SEDANG DIMUAT
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
                       child: CircularProgressIndicator(),
                     );
                   }
 
-                if (snapshot.hasError) {
-                  return const Center(
-                    child: Text(
-                      'Gagal memuat case.',
-                      style: TextStyle(
-                        color: textGrey,
+                  if (snapshot.hasError) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Text(
+                        'Gagal memuat case:\n${snapshot.error}',
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   );
                 }
 
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: Text(
-                      'Data case tidak ditemukan.',
-                      style: TextStyle(
-                        color: textGrey,
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: Text(
+                        'Data case tidak ditemukan.',
+                        style: TextStyle(color: textGrey),
                       ),
-                    ),
-                  );
-                }
+                    );
+                  }
 
-                  // DATA CASE DARI JSON
-                  final caseData = snapshot.data!;
+                  final case01 = snapshot.data![0];
+                  final case02 = snapshot.data![1];
 
                   return ListView(
                     children: [
-                      // CASE 01 - DATA DARI JSON
                       CaseItem(
                         number: '01',
-                        title: caseData.title,
+                        title: case01.title,
                         status: 'AVAILABLE',
                         locked: false,
                         onTap: () {
@@ -109,21 +112,30 @@ class CasesScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (_) => CaseBriefingScreen(
-                                caseData: caseData,
+                                caseData: case01,
                               ),
                             ),
                           );
                         },
                       ),
-                      // CASE 02
-                      const CaseItem(
+
+                      CaseItem(
                         number: '02',
-                        title: 'Student Discount',
-                        status: 'LOCKED',
-                        locked: true,
+                        title: case02.title,
+                        status: 'AVAILABLE',
+                        locked: false,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => CaseBriefingScreen(
+                                caseData: case02,
+                              ),
+                            ),
+                          );
+                        },
                       ),
 
-                      // CASE 03
                       const CaseItem(
                         number: '03',
                         title: 'Library Fine',
@@ -138,8 +150,7 @@ class CasesScreen extends StatelessWidget {
                         status: 'LOCKED',
                         locked: true,
                       ),
-
-                      // CASE 05
+                      // CASE 04
                       const CaseItem(
                         number: '05',
                         title: 'Final Case',
