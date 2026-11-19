@@ -5,6 +5,7 @@
   "difficulty": "Easy",
 
   "briefing": {
+    "visual_type": "money",
     "description": "Seorang siswa memiliki uang jajan sebesar Rp15.000. Ia menggunakan Rp5.000 untuk membeli makanan di kantin sekolah. Bantulah siswa tersebut menghitung sisa uang jajannya.",
     "mission": "Buatlah langkah-langkah logika untuk menghitung sisa uang jajan siswa.",
     "rules": [

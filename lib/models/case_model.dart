@@ -80,12 +80,14 @@ class CaseModel {
 class CaseBriefing {
   final String description;
   final String mission;
+  final String visualType;
   final List<String> rules;
   final List<BriefingFact> facts;
 
   CaseBriefing({
     required this.description,
     required this.mission,
+    required this.visualType,
     required this.rules,
     required this.facts,
   });
@@ -96,12 +98,13 @@ class CaseBriefing {
     return CaseBriefing(
       description: json['description'] as String,
       mission: json['mission'] as String,
+      visualType: json['visual_type'] as String? ?? 'default',
 
       rules: List<String>.from(
-        json['rules'],
+        json['rules'] ?? [],
       ),
 
-      facts: (json['facts'] as List)
+      facts: (json['facts'] as List? ?? [])
           .map(
             (item) => BriefingFact.fromJson(
               Map<String, dynamic>.from(item),

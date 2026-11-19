@@ -14,6 +14,8 @@
       "Lebar taman adalah 8 meter."
     ],
 
+    "visual_type": "rectangle",
+
     "facts": [
       {
         "label": "Panjang",

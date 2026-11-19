@@ -30,6 +30,147 @@ class CaseBriefingScreen extends StatelessWidget {
     return Icons.info_outline;
   }
 
+
+  Widget _buildVisualInformation(CaseBriefing briefing) {
+    Widget visual;
+
+    switch (briefing.visualType) {
+      case 'rectangle':
+        visual = Container(
+          height: 105,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: teal,
+              width: 2,
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Stack(
+            children: [
+              const Center(
+                child: Icon(
+                  Icons.grass_outlined,
+                  size: 38,
+                  color: teal,
+                ),
+              ),
+
+              if (briefing.facts.isNotEmpty)
+                Positioned(
+                  top: 8,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: _VisualLabel(
+                      text: briefing.facts[0].value,
+                    ),
+                  ),
+                ),
+
+              if (briefing.facts.length > 1)
+                Positioned(
+                  right: 8,
+                  top: 0,
+                  bottom: 0,
+                  child: Center(
+                    child: RotatedBox(
+                      quarterTurns: 1,
+                      child: _VisualLabel(
+                        text: briefing.facts[1].value,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+        break;
+
+      case 'money':
+        visual = Row(
+          children: [
+            Expanded(
+              child: _MoneyItem(
+                icon: Icons.account_balance_wallet_outlined,
+                label: briefing.facts.isNotEmpty
+                    ? briefing.facts[0].label
+                    : 'Uang awal',
+                value: briefing.facts.isNotEmpty
+                    ? briefing.facts[0].value
+                    : '-',
+              ),
+            ),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              child: Icon(
+                Icons.remove_rounded,
+                color: navy,
+                size: 24,
+              ),
+            ),
+
+            Expanded(
+              child: _MoneyItem(
+                icon: Icons.shopping_bag_outlined,
+                label: briefing.facts.length > 1
+                    ? briefing.facts[1].label
+                    : 'Uang digunakan',
+                value: briefing.facts.length > 1
+                    ? briefing.facts[1].value
+                    : '-',
+              ),
+            ),
+          ],
+        );
+        break;
+
+      default:
+        visual = Container(
+          height: 105,
+          width: double.infinity,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: borderGrey),
+          ),
+          child: const Icon(
+            Icons.info_outline,
+            size: 36,
+            color: teal,
+          ),
+        );
+    }
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEFF7F5),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'INFORMASI VISUAL',
+            style: TextStyle(
+              fontSize: 9,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1,
+              color: navy,
+            ),
+          ),
+          const SizedBox(height: 16),
+          visual,
+        ],
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final briefing = caseData.briefing;
@@ -173,97 +314,7 @@ class CaseBriefingScreen extends StatelessWidget {
                     // ==================================================
                     // AREA / ILUSTRASI
                     // ==================================================
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.fromLTRB(
-                        18,
-                        16,
-                        18,
-                        18,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFEFF7F5),
-                        borderRadius:
-                            BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        children: [
-                          const Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'INFORMASI VISUAL',
-                              style: TextStyle(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 1,
-                                color: navy,
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 16),
-
-                          Container(
-                            height: 105,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: teal,
-                                width: 2,
-                              ),
-                              borderRadius:
-                                  BorderRadius.circular(8),
-                            ),
-                            child: Stack(
-                              children: [
-                                const Center(
-                                  child: Icon(
-                                    Icons.grass_outlined,
-                                    size: 38,
-                                    color: teal,
-                                  ),
-                                ),
-
-                                // LABEL ATAS
-                                if (briefing.facts.isNotEmpty)
-                                  Positioned(
-                                    top: 8,
-                                    left: 0,
-                                    right: 0,
-                                    child: Center(
-                                      child: _VisualLabel(
-                                        text: briefing
-                                            .facts
-                                            .first
-                                            .value,
-                                      ),
-                                    ),
-                                  ),
-
-                                // LABEL SAMPING
-                                if (briefing.facts.length > 1)
-                                  Positioned(
-                                    right: 8,
-                                    top: 0,
-                                    bottom: 0,
-                                    child: Center(
-                                      child: RotatedBox(
-                                        quarterTurns: 1,
-                                        child: _VisualLabel(
-                                          text: briefing
-                                              .facts[1]
-                                              .value,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
+                    _buildVisualInformation(briefing), 
                     const SizedBox(height: 22),
 
                     // ==================================================
@@ -604,6 +655,67 @@ class _VisualLabel extends StatelessWidget {
     );
   }
 }
+
+  // VISUALTAMPILAN ILUSTRASI
+  class _MoneyItem extends StatelessWidget {
+    final IconData icon;
+    final String label;
+    final String value;
+
+    const _MoneyItem({
+      required this.icon,
+      required this.label,
+      required this.value,
+    });
+
+    @override
+    Widget build(BuildContext context) {
+      return Container(
+        constraints: const BoxConstraints(
+          minHeight: 105,
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: 12,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              color: teal,
+              size: 25,
+            ),
+            const SizedBox(height: 7),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 10,
+                color: textGrey,
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              value,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w800,
+                color: navy,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+  }
 
 // ============================================================
 // SECTION TITLE
