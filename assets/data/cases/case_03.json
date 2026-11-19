@@ -1,0 +1,132 @@
+
+{
+  "id": "case_03",
+  "title": "Menata Buku di Rak Perpustakaan",
+  "difficulty": "Easy",
+
+  "briefing": {
+    "description": "Petugas perpustakaan sedang menata buku di rak. Awalnya terdapat 12 buku di rak. Kemudian, petugas menambahkan 8 buku baru. Setelah itu, sebanyak 5 buku dipinjam oleh siswa.",
+    "mission": "Bantu petugas perpustakaan menghitung jumlah buku yang masih tersisa di rak.",
+    "visual_type": "books",
+    "facts": [
+      {
+        "label": "Buku awal",
+        "value": "12 buku"
+      },
+      {
+        "label": "Buku ditambahkan",
+        "value": "8 buku"
+      },
+      {
+        "label": "Buku dipinjam",
+        "value": "5 buku"
+      }
+    ],
+    "rules": [
+      "Jumlah buku setelah penambahan diperoleh dari buku awal ditambah buku yang ditambahkan.",
+      "Jumlah buku tersisa diperoleh dari jumlah buku setelah penambahan dikurangi buku yang dipinjam."
+    ]
+  },
+
+  "problem_analysis": {
+    "question": "Apa yang ingin diketahui oleh petugas perpustakaan dari kegiatan tersebut?",
+    "options": [
+      "Jumlah buku yang tersedia sebelum ada peminjaman.",
+      "Jumlah buku yang masih tersisa di rak setelah penambahan dan peminjaman.",
+      "Selisih antara buku yang ditambahkan dan buku yang dipinjam.",
+      "Jumlah buku yang dipinjam oleh siswa."
+    ],
+    "correct_answer": 1,
+    "feedback_correct": "Benar! Tujuan penyelesaian masalah ini adalah mengetahui jumlah buku yang masih tersisa di rak.",
+    "feedback_wrong": "Belum tepat. Perhatikan kembali tujuan akhir petugas perpustakaan setelah buku ditambahkan dan dipinjam."
+  },
+
+  "information_identification": {
+    "question": "Informasi mana saja yang diperlukan untuk mengetahui jumlah buku yang tersisa di rak?",
+    "information": [
+      {
+        "text": "Jumlah buku yang ditambahkan: 8 buku",
+        "relevant": true
+      },
+      {
+        "text": "Nama petugas perpustakaan",
+        "relevant": false
+      },
+      {
+        "text": "Jumlah buku awal: 12 buku",
+        "relevant": true
+      },
+      {
+        "text": "Warna rak buku",
+        "relevant": false
+      },
+      {
+        "text": "Jumlah buku yang dipinjam: 5 buku",
+        "relevant": true
+      }
+    ]
+  },
+
+  "input_output_rules": {
+    "input": {
+      "question": "Data apa saja yang menjadi masukan untuk menyelesaikan masalah ini?",
+      "options": [
+        "Jumlah buku awal, buku yang ditambahkan, dan buku yang dipinjam.",
+        "Nama petugas dan warna rak buku.",
+        "Jumlah rak dan nama perpustakaan."
+      ],
+      "correct_answer": 0
+    },
+    "output": {
+      "question": "Apa hasil yang ingin diperoleh dari proses perhitungan?",
+      "options": [
+        "Jumlah buku yang ditambahkan.",
+        "Jumlah buku yang dipinjam.",
+        "Jumlah buku yang tersisa di rak."
+      ],
+      "correct_answer": 2
+    },
+    "rules": {
+      "question": "Aturan apa yang digunakan untuk menghitung jumlah buku tersisa?",
+      "options": [
+        "Buku awal dikurangi buku yang ditambahkan, kemudian ditambah buku yang dipinjam.",
+        "Buku awal ditambah buku yang ditambahkan, kemudian dikurangi buku yang dipinjam.",
+        "Buku awal ditambah buku yang dipinjam, kemudian dikurangi buku yang ditambahkan."
+      ],
+      "correct_answers": [1]
+    }
+  },
+
+  "logic_builder": {
+    "available_blocks": [
+      "START",
+      "INPUT",
+      "PROCESS",
+      "OUTPUT",
+      "END"
+    ],
+    "expected_logic": [
+      "START",
+      "INPUT",
+      "PROCESS",
+      "OUTPUT",
+      "END"
+    ]
+  },
+
+  "test_cases": [
+    {
+      "input": {
+        "buku_awal": 12,
+        "buku_ditambahkan": 8,
+        "buku_dipinjam": 5
+      },
+      "expected_result": 15
+    }
+  ],
+
+  "feedback": {
+    "correct": "Hebat! Kamu berhasil menghitung jumlah buku yang tersisa di rak perpustakaan.",
+    "wrong": "Hasilnya belum tepat. Periksa kembali urutan penjumlahan dan pengurangan yang digunakan."
+  }
+}

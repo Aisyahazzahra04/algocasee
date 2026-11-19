@@ -60,6 +60,7 @@ flutter:
   assets:
     - assets/data/cases/case_01.json
     - assets/data/cases/case_02.json
+    - assets/data/cases/case_03.json
     - assets/images/
 
   # To add assets to your application, add an assets section, like this:

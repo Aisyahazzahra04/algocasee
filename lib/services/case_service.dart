@@ -1,8 +1,5 @@
-
 import 'dart:convert';
-
 import 'package:flutter/services.dart';
-
 import '../models/case_model.dart';
 
 class CaseService {
@@ -21,5 +18,9 @@ class CaseService {
 
   static Future<CaseModel> loadCase02() {
     return loadCase('assets/data/cases/case_02.json');
+  }
+
+    static Future<CaseModel> loadCase03() {
+    return loadCase('assets/data/cases/case_03.json');
   }
 }

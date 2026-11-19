@@ -126,6 +126,68 @@ class CaseBriefingScreen extends StatelessWidget {
         );
         break;
 
+              case 'books':
+              visual = Container(
+                width: double.infinity,
+                height: 120,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.auto_stories_rounded,
+                      color: teal,
+                      size: 38,
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _BookCount(
+                          label: 'Buku awal',
+                          value: briefing.facts.isNotEmpty
+                              ? briefing.facts[0].value
+                              : '-',
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          child: Icon(
+                            Icons.add,
+                            color: teal,
+                            size: 18,
+                          ),
+                        ),
+                        _BookCount(
+                          label: 'Ditambahkan',
+                          value: briefing.facts.length > 1
+                              ? briefing.facts[1].value
+                              : '-',
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          child: Icon(
+                            Icons.remove,
+                            color: teal,
+                            size: 18,
+                          ),
+                        ),
+                        _BookCount(
+                          label: 'Dipinjam',
+                          value: briefing.facts.length > 2
+                              ? briefing.facts[2].value
+                              : '-',
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+              break;
+
       default:
         visual = Container(
           height: 105,
@@ -758,61 +820,98 @@ class _SectionTitle extends StatelessWidget {
 // INFORMATION ROW
 // ============================================================
 
-class _InfoRow extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
+  class _InfoRow extends StatelessWidget {
+    final IconData icon;
+    final String label;
+    final String value;
 
-  const _InfoRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
+    const _InfoRow({
+      required this.icon,
+      required this.label,
+      required this.value,
+    });
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 34,
-          height: 34,
-          decoration: BoxDecoration(
-            color: const Color(0xFFEFF7F5),
-            borderRadius:
-                BorderRadius.circular(9),
-          ),
-          child: Icon(
-            icon,
-            size: 17,
-            color: teal,
-          ),
-        ),
-
-        const SizedBox(width: 11),
-
-        Expanded(
-          child: Text(
-            label,
-            style: const TextStyle(
-              fontSize: 13,
-              color: textGrey,
+    @override
+    Widget build(BuildContext context) {
+      return Row(
+        children: [
+          Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              color: const Color(0xFFEFF7F5),
+              borderRadius:
+                  BorderRadius.circular(9),
+            ),
+            child: Icon(
+              icon,
+              size: 17,
+              color: teal,
             ),
           ),
-        ),
 
-        Flexible(
-          child: Text(
-            value,
-            textAlign: TextAlign.right,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: textDark,
+          const SizedBox(width: 11),
+
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 13,
+                color: textGrey,
+              ),
             ),
           ),
-        ),
-      ],
-    );
+
+          Flexible(
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: textDark,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
   }
-}
 
+  class _BookCount extends StatelessWidget {
+    final String label;
+    final String value;
+
+    const _BookCount({
+      required this.label,
+      required this.value,
+    });
+
+    @override
+    Widget build(BuildContext context) {
+      return Expanded(
+        child: Column(
+          children: [
+            Text(
+              value,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w800,
+                color: navy,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 9,
+                color: textGrey,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+  }
