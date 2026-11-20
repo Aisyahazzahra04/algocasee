@@ -65,6 +65,7 @@ class CasesScreen extends StatelessWidget {
                 future: Future.wait([
                   CaseService.loadCase01(),
                   CaseService.loadCase02(),
+                  CaseService.loadCase03(),
                 ]),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -99,7 +100,7 @@ class CasesScreen extends StatelessWidget {
 
                   final case01 = snapshot.data![0];
                   final case02 = snapshot.data![1];
-
+                  final case03 = snapshot.data![2];
                   return ListView(
                     children: [
                       CaseItem(
@@ -136,12 +137,22 @@ class CasesScreen extends StatelessWidget {
                         },
                       ),
 
-                      const CaseItem(
-                        number: '03',
-                        title: 'Library Fine',
-                        status: 'LOCKED',
-                        locked: true,
-                      ),
+                      CaseItem(
+                      number: '03',
+                      title: case03.title,
+                      status: 'AVAILABLE',
+                      locked: false,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => CaseBriefingScreen(
+                              caseData: case03,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
 
                       // CASE 04
                       const CaseItem(
