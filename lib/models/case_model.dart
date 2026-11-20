@@ -376,29 +376,48 @@ class RuleOption {
 
 class LogicBuilder {
   final List<String> availableBlocks;
+  final List<LogicVariable> variables;
   final List<String> expectedLogic;
 
   LogicBuilder({
     required this.availableBlocks,
+    required this.variables,
     required this.expectedLogic,
   });
 
-  factory LogicBuilder.fromJson(
-    Map<String, dynamic> json,
-  ) {
+  factory LogicBuilder.fromJson(Map<String, dynamic> json) {
     return LogicBuilder(
-      availableBlocks: List<String>.from(
-        json['available_blocks'],
-      ),
+      availableBlocks: List<String>.from(json['available_blocks'] ?? []),
+      variables: (json['variables'] as List? ?? [])
+          .map((item) => LogicVariable.fromJson(Map<String, dynamic>.from(item)))
+          .toList(),
+      expectedLogic: List<String>.from(json['expected_logic'] ?? []),
+    );
+  }
+}
 
-      expectedLogic: List<String>.from(
-        json['expected_logic'],
-      ),
+class LogicVariable {
+  final String name;
+  final String type;
+  final String role;
+
+  LogicVariable({
+    required this.name,
+    required this.type,
+    required this.role,
+  });
+
+  factory LogicVariable.fromJson(Map<String, dynamic> json) {
+    return LogicVariable(
+      name: json['name'] as String,
+      type: json['type'] as String? ?? 'Integer',
+      role: json['role'] as String? ?? 'input',
     );
   }
 }
 
 // ============================================================
+
 // TEST CASE
 // ============================================================
 

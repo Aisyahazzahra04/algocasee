@@ -1,9 +1,7 @@
-
 {
   "id": "case_02",
   "title": "Menghitung Sisa Uang Jajan",
   "difficulty": "Easy",
-
   "briefing": {
     "visual_type": "money",
     "description": "Seorang siswa memiliki uang jajan sebesar Rp15.000. Ia menggunakan Rp5.000 untuk membeli makanan di kantin sekolah. Bantulah siswa tersebut menghitung sisa uang jajannya.",
@@ -23,7 +21,6 @@
       }
     ]
   },
-
   "problem_analysis": {
     "question": "Apa yang harus dilakukan untuk mengetahui sisa uang jajan siswa?",
     "options": [
@@ -36,7 +33,6 @@
     "feedback_correct": "Benar! Untuk mengetahui sisa uang, kita perlu mengurangi uang awal dengan uang yang digunakan.",
     "feedback_wrong": "Belum tepat. Ingat, untuk menghitung sisa uang, gunakan operasi pengurangan."
   },
-
   "information_identification": {
     "question": "Informasi apa saja yang diperlukan untuk menghitung sisa uang jajan?",
     "information": [
@@ -58,7 +54,6 @@
       }
     ]
   },
-
   "input_output_rules": {
     "input": {
       "question": "Data apa saja yang menjadi input dalam masalah ini?",
@@ -69,7 +64,6 @@
       ],
       "correct_answer": 0
     },
-
     "output": {
       "question": "Apa hasil yang ingin diketahui dari masalah ini?",
       "options": [
@@ -79,7 +73,6 @@
       ],
       "correct_answer": 2
     },
-
     "rules": {
       "question": "Aturan apa yang tepat untuk menghitung sisa uang jajan?",
       "options": [
@@ -92,18 +85,35 @@
       ]
     }
   },
-
   "logic_builder": {
     "available_blocks": [
       "START",
-      "INPUT uang_awal",
-      "INPUT uang_digunakan",
-      "PROCESS sisa_uang = uang_awal - uang_digunakan",
-      "OUTPUT sisa_uang",
+      "DECLARE",
+      "INPUT",
+      "PROCESS",
+      "OUTPUT",
       "END"
+    ],
+    "variables": [
+      {
+        "name": "uang_awal",
+        "type": "Integer",
+        "role": "input"
+      },
+      {
+        "name": "uang_digunakan",
+        "type": "Integer",
+        "role": "input"
+      },
+      {
+        "name": "sisa_uang",
+        "type": "Integer",
+        "role": "output"
+      }
     ],
     "expected_logic": [
       "START",
+      "DECLARE uang_awal, uang_digunakan, sisa_uang : Integer",
       "INPUT uang_awal",
       "INPUT uang_digunakan",
       "PROCESS sisa_uang = uang_awal - uang_digunakan",
@@ -111,7 +121,6 @@
       "END"
     ]
   },
-
   "test_cases": [
     {
       "input": {
@@ -121,7 +130,6 @@
       "expected_result": 10000
     }
   ],
-
   "feedback": {
     "correct": "Hebat! Kamu berhasil menghitung sisa uang jajan dengan benar.",
     "wrong": "Belum tepat. Ingat, untuk menghitung sisa uang, kurangi uang awal dengan uang yang digunakan."

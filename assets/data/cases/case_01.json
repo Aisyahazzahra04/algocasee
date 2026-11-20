@@ -5,9 +5,7 @@
 
   "briefing": {
     "description": "Taman kecil di depan gedung sekolah sedang ingin dirapikan. Bagian taman yang akan ditanami rumput berbentuk persegi panjang. Sebelum membeli rumput, sekolah perlu mengetahui luas area taman yang harus ditutup. Panjang taman adalah 12 meter dan lebarnya 8 meter.",
-
     "mission": "Tentukan luas taman yang perlu ditanami rumput.",
-
     "rules": [
       "Taman berbentuk persegi panjang.",
       "Panjang taman adalah 12 meter.",
@@ -15,7 +13,7 @@
     ],
 
     "visual_type": "rectangle",
-
+    
     "facts": [
       {
         "label": "Panjang",
@@ -43,9 +41,7 @@
     ],
 
     "correct_answer": 0,
-
     "feedback_correct": "Benar. Masalah utama pada kasus ini adalah menentukan luas area taman.",
-
     "feedback_wrong": "Coba perhatikan kembali tujuan sekolah. Apa informasi yang sebenarnya ingin diketahui?"
   },
 
@@ -103,20 +99,43 @@
         "Lebar taman adalah 8 meter",
         "Luas taman = panjang + lebar"
       ],
-      "correct_answers": [0, 1, 2]
+      "correct_answers": [
+        0,
+        1,
+        2
+      ]
     }
   },
 
   "logic_builder": {
     "available_blocks": [
       "START",
+      "DECLARE",
       "INPUT",
       "PROCESS",
       "OUTPUT",
       "END"
     ],
+    "variables": [
+      {
+        "name": "panjang",
+        "type": "Integer",
+        "role": "input"
+      },
+      {
+        "name": "lebar",
+        "type": "Integer",
+        "role": "input"
+      },
+      {
+        "name": "luas",
+        "type": "Integer",
+        "role": "output"
+      }
+    ],
     "expected_logic": [
       "START",
+      "DECLARE panjang, lebar, luas : Integer",
       "INPUT panjang",
       "INPUT lebar",
       "PROCESS luas = panjang × lebar",
@@ -137,7 +156,6 @@
 
   "feedback": {
     "correct": "Bagus! Algoritmamu menghasilkan ",
-
     "wrong": "Hasilnya belum sesuai. Coba periksa kembali urutan INPUT dan PROCESS pada Logic Builder."
   }
 }

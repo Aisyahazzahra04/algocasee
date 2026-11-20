@@ -10,6 +10,7 @@ import 'information_identification_screen.dart';
 import 'input_output_rules_screen.dart';
 
 enum _LogicType {
+  declare,
   input,
   output,
   process,
@@ -229,6 +230,9 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
 
     for (final node in _nodes) {
       switch (node.type) {
+        case _LogicType.declare:
+          logic.add('DECLARE ${node.text}');
+          break;
         case _LogicType.input:
           logic.add('INPUT ${node.text}');
           break;
@@ -258,6 +262,8 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
 
   List<String> _serializeBranchNode(_FlowNode node) {
     switch (node.type) {
+      case _LogicType.declare:
+        return ['DECLARE ${node.text}'];
       case _LogicType.input:
         return ['INPUT ${node.text}'];
       case _LogicType.output:
@@ -666,6 +672,14 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
     required VoidCallback onDelete,
   }) {
     switch (node.type) {
+      case _LogicType.declare:
+        return _RectangleNode(
+          title: 'DECLARE',
+          text: node.text,
+          color: const Color(0xFFEDE9FE),
+          onTap: _isEditing ? onTap : () {},
+          onDelete: onDelete,
+        );
       case _LogicType.input:
         return _ParallelogramNode(
           title: 'INPUT',
@@ -788,6 +802,15 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
                 ),
                 const SizedBox(height: 16),
                 _AddMenuItem(
+                  title: 'DECLARE',
+                  subtitle: 'Mendefinisikan variabel dan tipe data',
+                  color: const Color(0xFFEDE9FE),
+                  onTap: () {
+                    Navigator.pop(context);
+                    onSelected(_LogicType.declare);
+                  },
+                ),
+                _AddMenuItem(
                   title: 'INPUT',
                   subtitle: 'Menerima data',
                   color: const Color(0xFFDDEAFF),
@@ -839,13 +862,27 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
     _LogicType type, {
     String initialText = '',
   }) async {
-    final controller = TextEditingController(text: initialText);
+    String selectedType = 'Integer';
+    var initialValue = initialText;
+    if (type == _LogicType.declare && initialText.contains(' : ')) {
+      final parts = initialText.split(' : ');
+      initialValue = parts.first;
+      if (parts.length > 1 && ['Integer', 'Real', 'String', 'Boolean'].contains(parts.last)) {
+        selectedType = parts.last;
+      }
+    }
+    final controller = TextEditingController(text: initialValue);
 
     String title;
     String hint;
     String suggestion;
 
     switch (type) {
+      case _LogicType.declare:
+        title = 'Tambah DECLARE';
+        hint = 'Contoh: panjang, lebar, luas';
+        suggestion = 'Masukkan nama variabel. Semua variabel dalam blok ini menggunakan tipe data yang sama.';
+        break;
       case _LogicType.input:
         title = 'Tambah INPUT';
         hint = 'Contoh: panjang';
@@ -924,6 +961,18 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
                   ),
                 ),
               ),
+              if (type == _LogicType.declare) ...[
+                const SizedBox(height: 12),
+                const Text('Tipe data', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: textDark)),
+                StatefulBuilder(builder: (context, setDialogState) {
+                  return DropdownButtonFormField<String>(
+                    initialValue: selectedType,
+                    items: const ['Integer', 'Real', 'String', 'Boolean'].map((typeName) => DropdownMenuItem(value: typeName, child: Text(typeName))).toList(),
+                    onChanged: (value) { if (value != null) setDialogState(() => selectedType = value); },
+                    decoration: InputDecoration(isDense: true, border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
+                  );
+                }),
+              ],
             ],
           ),
           actions: [
@@ -942,7 +991,8 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
               onPressed: () {
                 final value = controller.text.trim();
                 if (value.isEmpty) return;
-                Navigator.of(dialogContext).pop(value);
+                final savedValue = type == _LogicType.declare ? '$value : $selectedType' : value;
+                Navigator.of(dialogContext).pop(savedValue);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: navy,
@@ -1598,6 +1648,9 @@ class _MiniFlowNode extends StatelessWidget {
     Color color;
 
     switch (node.type) {
+      case _LogicType.declare:
+        color = const Color(0xFFEDE9FE);
+        break;
       case _LogicType.input:
         color = const Color(0xFFDDEAFF);
         break;
