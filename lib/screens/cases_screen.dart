@@ -50,7 +50,7 @@ class CasesScreen extends StatelessWidget {
 
             // PROGRESS CASE
             const Text(
-              '0 of 5 Cases Completed',
+              '0 of 10 Cases Completed',
               style: TextStyle(
                 fontSize: 10,
                 color: textGrey,
@@ -66,6 +66,7 @@ class CasesScreen extends StatelessWidget {
                   CaseService.loadCase01(),
                   CaseService.loadCase02(),
                   CaseService.loadCase03(),
+                  CaseService.loadCase04(),
                 ]),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -101,6 +102,7 @@ class CasesScreen extends StatelessWidget {
                   final case01 = snapshot.data![0];
                   final case02 = snapshot.data![1];
                   final case03 = snapshot.data![2];
+                  final case04 = snapshot.data![3];
                   return ListView(
                     children: [
                       CaseItem(
@@ -155,13 +157,23 @@ class CasesScreen extends StatelessWidget {
                     ),
 
                       // CASE 04
-                      const CaseItem(
-                        number: '04',
-                        title: 'Electricity Bill',
-                        status: 'LOCKED',
-                        locked: true,
-                      ),
-                      // CASE 04
+                      CaseItem(
+                      number: '04',
+                      title: case04.title,
+                      status: 'AVAILABLE',
+                      locked: false,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => CaseBriefingScreen(
+                              caseData: case04,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                      // CASE 05
                       const CaseItem(
                         number: '05',
                         title: 'Final Case',

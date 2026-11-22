@@ -13,7 +13,7 @@ enum _LogicType {
   declare,
   input,
   output,
-  process,
+  process, 
   decision,
 }
 

@@ -1,0 +1,137 @@
+
+{
+  "id": "case_04",
+  "title": "Belanja Perlengkapan Sekolah",
+  "difficulty": "Easy",
+  "briefing": {
+    "description": "Rani pergi ke toko alat tulis untuk membeli perlengkapan sekolah. Ia ingin membeli 4 buku tulis. Harga setiap buku tulis adalah Rp5.000. Sebelum membayar, Rani ingin mengetahui jumlah uang yang harus disiapkan untuk membeli semua buku tersebut.",
+    "mission": "Bantu Rani menghitung total harga seluruh buku tulis yang akan dibeli.",
+    "visual_type": "default",
+    "facts": [
+      {
+        "label": "Jumlah buku",
+        "value": "4 buku"
+      },
+      {
+        "label": "Harga satu buku",
+        "value": "Rp5.000"
+      }
+    ],
+    "rules": [
+      "Total harga diperoleh dengan mengalikan jumlah buku dengan harga satu buku."
+    ]
+  },
+  "problem_analysis": {
+    "question": "Apa yang ingin diketahui Rani sebelum membayar buku tulis tersebut?",
+    "options": [
+      "Jumlah buku yang tersedia di toko.",
+      "Harga satu buku tulis.",
+      "Total harga seluruh buku tulis yang dibeli.",
+      "Jumlah uang yang dimiliki Rani."
+    ],
+    "correct_answer": 2,
+    "feedback_correct": "Benar! Rani ingin mengetahui total harga seluruh buku tulis yang dibelinya.",
+    "feedback_wrong": "Belum tepat. Perhatikan kembali hal yang ingin diketahui Rani sebelum membayar."
+  },
+  "information_identification": {
+    "question": "Informasi mana saja yang diperlukan untuk menghitung total harga buku tulis?",
+    "information": [
+      {
+        "text": "Jumlah buku yang dibeli: 4 buku",
+        "relevant": true
+      },
+      {
+        "text": "Harga satu buku: Rp5.000",
+        "relevant": true
+      },
+      {
+        "text": "Nama penjaga toko",
+        "relevant": false
+      },
+      {
+        "text": "Warna sampul buku",
+        "relevant": false
+      }
+    ]
+  },
+  "input_output_rules": {
+    "input": {
+      "question": "Data apa saja yang menjadi masukan untuk menghitung total harga buku?",
+      "options": [
+        "Jumlah buku dan harga satu buku.",
+        "Nama penjaga toko dan warna sampul buku.",
+        "Jumlah uang yang dimiliki Rani."
+      ],
+      "correct_answer": 0
+    },
+    "output": {
+      "question": "Apa hasil yang ingin diperoleh dari proses perhitungan?",
+      "options": [
+        "Jumlah buku yang dibeli.",
+        "Harga satu buku.",
+        "Total harga seluruh buku."
+      ],
+      "correct_answer": 2
+    },
+    "rules": {
+      "question": "Aturan apa yang digunakan untuk menghitung total harga buku?",
+      "options": [
+        "Jumlah buku ditambah harga satu buku.",
+        "Jumlah buku dikalikan harga satu buku.",
+        "Harga satu buku dikurangi jumlah buku."
+      ],
+      "correct_answers": [
+        1
+      ]
+    }
+  },
+  "logic_builder": {
+    "available_blocks": [
+      "START",
+      "DECLARE",
+      "INPUT",
+      "PROCESS",
+      "OUTPUT",
+      "END"
+    ],
+    "variables": [
+      {
+        "name": "jumlah_buku",
+        "type": "Integer",
+        "role": "input"
+      },
+      {
+        "name": "harga_buku",
+        "type": "Integer",
+        "role": "input"
+      },
+      {
+        "name": "total_harga",
+        "type": "Integer",
+        "role": "output"
+      }
+    ],
+    "expected_logic": [
+      "START",
+      "DECLARE jumlah_buku, harga_buku, total_harga : Integer",
+      "INPUT jumlah_buku",
+      "INPUT harga_buku",
+      "PROCESS total_harga = jumlah_buku * harga_buku",
+      "OUTPUT total_harga",
+      "END"
+    ]
+  },
+  "test_cases": [
+    {
+      "input": {
+        "jumlah_buku": 4,
+        "harga_buku": 5000
+      },
+      "expected_result": 20000
+    }
+  ],
+  "feedback": {
+    "correct": "Hebat! Kamu berhasil menghitung total harga seluruh buku tulis yang dibeli Rani.",
+    "wrong": "Hasilnya belum tepat. Periksa kembali jumlah buku dan harga satu buku, lalu gunakan operasi perkalian."
+  }
+}
