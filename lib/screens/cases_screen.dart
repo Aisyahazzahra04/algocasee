@@ -110,13 +110,13 @@ class CasesScreen extends StatelessWidget {
                         title: case01.title,
                         status: 'AVAILABLE',
                         locked: false,
+                        imagePath: 'assets/images/foto_case01.jpg',
+                      accentColor: const Color(0xFF22A06B),
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => CaseBriefingScreen(
-                                caseData: case01,
-                              ),
+                              builder: (_) => CaseBriefingScreen(caseData: case01,),
                             ),
                           );
                         },
@@ -127,13 +127,13 @@ class CasesScreen extends StatelessWidget {
                         title: case02.title,
                         status: 'AVAILABLE',
                         locked: false,
+                        accentColor: const Color(0xFFE5A323),
+                        imagePath: 'assets/images/foto_case02.jpg',
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => CaseBriefingScreen(
-                                caseData: case02,
-                              ),
+                              builder: (_) => CaseBriefingScreen(caseData: case02,), 
                             ),
                           );
                         },
@@ -144,6 +144,8 @@ class CasesScreen extends StatelessWidget {
                       title: case03.title,
                       status: 'AVAILABLE',
                       locked: false,
+                      accentColor: const Color(0xFF8966C9),
+                      imagePath: 'assets/images/foto_case03.jpg',
                       onTap: () {
                         Navigator.push(
                           context,
@@ -162,6 +164,8 @@ class CasesScreen extends StatelessWidget {
                       title: case04.title,
                       status: 'AVAILABLE',
                       locked: false,
+                      accentColor: const Color(0xFF2585C5),
+                      imagePath: 'assets/images/foto_case04.jpg',
                       onTap: () {
                         Navigator.push(
                           context,
@@ -179,6 +183,8 @@ class CasesScreen extends StatelessWidget {
                         title: 'Final Case',
                         status: 'LOCKED',
                         locked: true,
+                        accentColor: Color(0xFF89909D),
+                        imagePath: 'assets/images/cases/foto_case05.jpg',
                       ),
                     ],
                   );
@@ -197,114 +203,224 @@ class CasesScreen extends StatelessWidget {
 // ============================================================
 // KOMPONEN CARD CASE
 // ============================================================
+  class CaseItem extends StatelessWidget {
+    final String number;
+    final String title;
+    final String status;
+    final bool locked;
+    final VoidCallback? onTap;
+    final Color accentColor;
+    final String imagePath;
+    
 
-class CaseItem extends StatelessWidget {
-  final String number;
-  final String title;
-  final String status;
-  final bool locked;
-  final VoidCallback? onTap;
+    const CaseItem({
+      super.key,
+      required this.number,
+      required this.title,
+      required this.status,
+      required this.locked,
+      required this.imagePath,
+      required this.accentColor,
+      this.onTap,
+    });
 
-  const CaseItem({
-    super.key,
-    required this.number,
-    required this.title,
-    required this.status,
-    required this.locked,
-    this.onTap,
-  });
+    @override
+    Widget build(BuildContext context) {
+      final Color backgroundColor =
+          Color.lerp(accentColor, Colors.white, 0.88)!;
 
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: locked ? null : onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        width: double.infinity,
-        height: 90,
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
-        ),
+      return Container(
+        margin: const EdgeInsets.only(bottom: 14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: locked ? const Color(0xFFF5F6F8) : Colors.white,
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: locked ? borderGrey : navy,
+            color: accentColor.withValues(alpha: 0.45),
             width: 1.2,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: accentColor.withValues(alpha: 0.12),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: InkWell(
+          onTap: locked ? null : onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              children: [
+                // ILUSTRASI CASE
+                // GAMBAR ILUSTRASI CASE
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.asset(
+                    imagePath,
+                    width: 82,
+                    height: 88,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 82,
+                        height: 88,
+                        color: backgroundColor,
+                        child: Icon(
+                          Icons.image_not_supported_outlined,
+                          color: accentColor,
+                          size: 32,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+                const SizedBox(width: 12),
+
+                // INFORMASI CASE
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 9,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: backgroundColor,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          'CASE $number',
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                            color: locked ? textGrey : accentColor,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 6),
+
+                      Text(
+                        title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: locked ? textGrey : textDark,
+                        ),
+                      ),
+
+                      const SizedBox(height: 7),
+
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: locked
+                              ? const Color(0xFFE6E8EC)
+                              : const Color(0xFFE5F5EB),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          locked ? 'LOCKED' : 'EASY',
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            color: locked
+                                ? textGrey
+                                : const Color(0xFF218653),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(width: 8),
+
+                // STATUS CASE
+                _buildStatus(),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    
+    Widget _buildStatus() {
+      final String currentStatus = locked
+          ? 'LOCKED'
+          : status.toUpperCase();
+
+      late String statusText;
+      late Color statusColor;
+      late IconData statusIcon;
+
+      switch (currentStatus) {
+        case 'COMPLETED':
+        case 'SELESAI':
+          statusText = 'SELESAI';
+          statusColor = const Color(0xFF22A06B);
+          statusIcon = Icons.check_circle_rounded;
+          break;
+
+        case 'IN_PROGRESS':
+        case 'PROSES':
+          statusText = 'PROSES';
+          statusColor = const Color(0xFFE5A323);
+          statusIcon = Icons.pending_rounded;
+          break;
+
+        case 'LOCKED':
+          statusText = 'LOCKED';
+          statusColor = const Color(0xFF89909D);
+          statusIcon = Icons.lock_rounded;
+          break;
+
+        default:
+          statusText = 'MULAI';
+          statusColor = const Color(0xFF1769C2);
+          statusIcon = Icons.play_circle_fill_rounded;
+      }
+
+      return Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 9,
+          vertical: 9,
+        ),
+        decoration: BoxDecoration(
+          color: statusColor,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Row(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // INFORMASI CASE
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'CASE $number',
-                    style: TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.w500,
-                      color: locked ? textGrey : navy,
-                    ),
-                  ),
-
-                  const SizedBox(height: 4),
-
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: locked ? textGrey : textDark,
-                    ),
-                  ),
-                ],
-              ),
+            Icon(
+              statusIcon,
+              color: Colors.white,
+              size: 19,
             ),
-
-            // STATUS CASE
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 6,
-              ),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: locked ? textGrey : navy,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    locked
-                        ? Icons.lock_outline
-                        : Icons.play_arrow_outlined,
-                    size: 12,
-                    color: locked ? textGrey : navy,
-                  ),
-
-                  const SizedBox(width: 4),
-
-                  Text(
-                    status,
-                    style: TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.w700,
-                      color: locked ? textGrey : navy,
-                    ),
-                  ),
-                ],
+            const SizedBox(height: 3),
+            Text(
+              statusText,
+              style: const TextStyle(
+                fontSize: 8,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
               ),
             ),
           ],
         ),
-      ),
-    );
+      );
+    }
   }
-}
