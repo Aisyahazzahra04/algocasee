@@ -6,7 +6,7 @@
   "briefing": {
     "description": "Rani pergi ke toko alat tulis untuk membeli perlengkapan sekolah. Ia ingin membeli 4 buku tulis. Harga setiap buku tulis adalah Rp5.000. Sebelum membayar, Rani ingin mengetahui jumlah uang yang harus disiapkan untuk membeli semua buku tersebut.",
     "mission": "Bantu Rani menghitung total harga seluruh buku tulis yang akan dibeli.",
-    "visual_type": "default",
+    "visual_type": "stationery",
     "facts": [
       {
         "label": "Jumlah buku",

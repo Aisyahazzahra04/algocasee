@@ -27,6 +27,14 @@ class CaseBriefingScreen extends StatelessWidget {
       return Icons.crop_square_outlined;
     }
 
+    if (text.contains('buku')) {
+      return Icons.menu_book_outlined;
+    }
+
+    if (text.contains('harga')) {
+      return Icons.sell_outlined;
+    }
+
     return Icons.info_outline;
   }
 
@@ -117,6 +125,45 @@ class CaseBriefingScreen extends StatelessWidget {
                 label: briefing.facts.length > 1
                     ? briefing.facts[1].label
                     : 'Uang digunakan',
+                value: briefing.facts.length > 1
+                    ? briefing.facts[1].value
+                    : '-',
+              ),
+            ),
+          ],
+        );
+        break;
+
+        case 'stationery':
+        visual = Row(
+          children: [
+            Expanded(
+              child: _MoneyItem(
+                icon: Icons.menu_book_rounded,
+                label: briefing.facts.isNotEmpty
+                    ? briefing.facts[0].label
+                    : 'Jumlah buku',
+                value: briefing.facts.isNotEmpty
+                    ? briefing.facts[0].value
+                    : '-',
+              ),
+            ),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              child: Icon(
+                Icons.close_rounded,
+                color: teal,
+                size: 24,
+              ),
+            ),
+
+            Expanded(
+              child: _MoneyItem(
+                icon: Icons.sell_outlined,
+                label: briefing.facts.length > 1
+                    ? briefing.facts[1].label
+                    : 'Harga satu buku',
                 value: briefing.facts.length > 1
                     ? briefing.facts[1].value
                     : '-',
