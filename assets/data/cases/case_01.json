@@ -11,9 +11,7 @@
       "Panjang taman adalah 12 meter.",
       "Lebar taman adalah 8 meter."
     ],
-
     "visual_type": "rectangle",
-    
     "facts": [
       {
         "label": "Panjang",
@@ -32,14 +30,12 @@
 
   "problem_analysis": {
     "question": "Apa masalah utama yang harus diselesaikan?",
-
     "options": [
       "Menentukan luas taman yang akan ditanami rumput.",
       "Menentukan warna rumput yang akan digunakan.",
       "Menentukan jumlah siswa yang akan merawat taman.",
       "Menentukan waktu untuk membeli rumput."
     ],
-
     "correct_answer": 0,
     "feedback_correct": "Benar. Masalah utama pada kasus ini adalah menentukan luas area taman.",
     "feedback_wrong": "Coba perhatikan kembali tujuan sekolah. Apa informasi yang sebenarnya ingin diketahui?"
@@ -47,7 +43,6 @@
 
   "information_identification": {
     "question": "Informasi mana yang diperlukan untuk menentukan luas taman?",
-
     "information": [
       {
         "text": "Panjang taman 12 meter.",
@@ -79,7 +74,6 @@
       ],
       "correct_answer": 0
     },
-
     "output": {
       "question": "Hasil apa yang harus diperoleh dari proses penyelesaian masalah?",
       "options": [
@@ -90,7 +84,6 @@
       ],
       "correct_answer": 2
     },
-
     "rules": {
       "question": "Pilih semua aturan yang digunakan untuk menyelesaikan kasus ini.",
       "options": [
@@ -99,11 +92,7 @@
         "Lebar taman adalah 8 meter",
         "Luas taman = panjang + lebar"
       ],
-      "correct_answers": [
-        0,
-        1,
-        2
-      ]
+      "correct_answers": [0, 1, 2]
     }
   },
 
@@ -133,6 +122,10 @@
         "role": "output"
       }
     ],
+    "input_order": [
+      "panjang",
+      "lebar"
+    ],
     "expected_logic": [
       "START",
       "DECLARE panjang, lebar, luas : Integer",
@@ -151,6 +144,20 @@
         "lebar": 8
       },
       "expected_result": 96
+    },
+    {
+      "input": {
+        "panjang": 10,
+        "lebar": 5
+      },
+      "expected_result": 50
+    },
+    {
+      "input": {
+        "panjang": 7,
+        "lebar": 4
+      },
+      "expected_result": 28
     }
   ],
 

@@ -221,6 +221,7 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
   );
 }
 
+
   // ============================================================
   // GET USER LOGIC
   // ============================================================
@@ -229,51 +230,58 @@ class _LogicBuilderScreenState extends State<LogicBuilderScreen> {
     final logic = <String>['START'];
 
     for (final node in _nodes) {
-      switch (node.type) {
-        case _LogicType.declare:
-          logic.add('DECLARE ${node.text}');
-          break;
-        case _LogicType.input:
-          logic.add('INPUT ${node.text}');
-          break;
-        case _LogicType.output:
-          logic.add('OUTPUT ${node.text}');
-          break;
-        case _LogicType.process:
-          logic.add('PROCESS ${node.text}');
-          break;
-        case _LogicType.decision:
-          logic.add('DECISION ${node.text}');
-          logic.add('TRUE:');
-          for (final branchNode in node.trueBranch) {
-            logic.addAll(_serializeBranchNode(branchNode));
-          }
-          logic.add('FALSE:');
-          for (final branchNode in node.falseBranch) {
-            logic.addAll(_serializeBranchNode(branchNode));
-          }
-          break;
-      }
+      logic.addAll(_serializeBranchNode(node));
     }
 
     logic.add('END');
+
     return logic;
   }
+
+
+  // ============================================================
+  // SERIALIZE FLOW NODE
+  // ============================================================
 
   List<String> _serializeBranchNode(_FlowNode node) {
     switch (node.type) {
       case _LogicType.declare:
         return ['DECLARE ${node.text}'];
+
       case _LogicType.input:
         return ['INPUT ${node.text}'];
+
       case _LogicType.output:
         return ['OUTPUT ${node.text}'];
+
       case _LogicType.process:
         return ['PROCESS ${node.text}'];
+
       case _LogicType.decision:
-        return ['DECISION ${node.text}'];
+        final logic = <String>[
+          'DECISION ${node.text}',
+          'TRUE:',
+        ];
+
+        // Simpan seluruh instruksi pada cabang TRUE.
+        for (final branchNode in node.trueBranch) {
+          logic.addAll(_serializeBranchNode(branchNode));
+        }
+
+        logic.add('FALSE:');
+
+        // Simpan seluruh instruksi pada cabang FALSE.
+        for (final branchNode in node.falseBranch) {
+          logic.addAll(_serializeBranchNode(branchNode));
+        }
+
+        // Penanda bahwa percabangan sudah selesai.
+        logic.add('END_DECISION');
+
+        return logic;
     }
   }
+
 
   // ============================================================
   // ADD BRANCH NODE

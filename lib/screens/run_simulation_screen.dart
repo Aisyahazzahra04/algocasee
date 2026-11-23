@@ -9,6 +9,10 @@ import 'input_output_rules_screen.dart';
 import 'logic_builder_screen.dart';
 import 'app_shell.dart';
 import '../services/database_service.dart';
+import '../logic/logic_reader.dart';
+import '../logic/logic_executor.dart';
+import '../logic/logic_engine.dart';
+import '../logic/logic_test_result.dart';
 
 class RunSimulationScreen extends StatefulWidget {
   final CaseModel caseData;
@@ -431,19 +435,24 @@ class _RunSimulationScreenState extends State<RunSimulationScreen> {
     );
   }
 
-  void _runSimulation(BuildContext dialogContext) {
-    final values = <String, num>{};
+    void _runSimulation(BuildContext dialogContext) {
+    final manualInputValues = <dynamic>[];
 
+    // Ambil nilai input sesuai urutan input yang digunakan oleh case.
     for (final entry in _inputControllers.entries) {
       final raw = entry.value.text.trim().replaceAll(',', '.');
       final parsed = num.tryParse(raw);
+
       if (parsed == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Masukkan nilai ${entry.key} dengan benar.')),
+          SnackBar(
+            content: Text('Masukkan nilai ${entry.key} dengan benar.'),
+          ),
         );
         return;
       }
-      values[entry.key.toLowerCase()] = parsed;
+
+      manualInputValues.add(parsed);
     }
 
     final check = LogicChecker.check(
@@ -462,56 +471,196 @@ class _RunSimulationScreenState extends State<RunSimulationScreen> {
     }
 
     try {
-      final output = _executeUserLogic(values);
-      final expected = _testCase.expectedResult;
-      final passed = _sameNumber(output, expected);
-      Navigator.pop(dialogContext);
-      _showResultDialog(
-        isCorrect: passed,
-        actualResult: output,
-        message: passed
-            ? '${widget.caseData.feedback.correct}$output.'
-            : widget.caseData.feedback.wrong,
+      final instructions = LogicReader.read(widget.userLogic);
+
+      // Simulasi manual hanya menjalankan input yang dimasukkan pengguna.
+      // Hasilnya tidak dibandingkan dengan expected result Test Case 01,
+      // karena nilai input manual dapat berbeda dari data contoh.
+      final output = LogicExecutor.execute(
+        instructions: instructions,
+        caseData: widget.caseData,
+        testCase: _testCase,
+        manualInputValues: manualInputValues,
       );
-    } catch (error) {
+
       Navigator.pop(dialogContext);
+
+      _showResultDialog(
+        isCorrect: true,
+        actualResult: output,
+        message:
+            'Simulasi berhasil dijalankan. Selanjutnya, periksa seluruh test case untuk menyelesaikan case ini.',
+      );
+    } catch (e) {
+      Navigator.pop(dialogContext);
+
       _showResultDialog(
         isCorrect: false,
         actualResult: null,
-        message: 'Logika belum dapat dijalankan. Periksa kembali blok PROCESS dan OUTPUT yang kamu susun. ($error)',
+        message: 'Logika belum dapat dijalankan. $e',
       );
     }
   }
 
-  // Interpreter sederhana untuk INPUT, PROCESS penugasan aritmetika, dan OUTPUT.
-  // Ekspresi yang didukung: +, -, *, ×, /, ÷, dan tanda kurung.
-  num _executeUserLogic(Map<String, num> variables) {
-    num? output;
+  // VALIDASI SELURUH TEST CASE
+  Future<void> _validateAllTestCases() async {
+    final results = LogicEngine.evaluate(
+      caseData: widget.caseData,
+      userLogic: widget.userLogic,
+    );
 
-    for (final rawLine in widget.userLogic) {
-      final line = rawLine.trim();
-      if (line.startsWith('PROCESS ')) {
-        final statement = line.substring(8).trim();
-        final separator = statement.indexOf('=');
-        if (separator < 1) throw FormatException('Format PROCESS tidak dikenali.');
-        final name = statement.substring(0, separator).trim().toLowerCase();
-        final expression = statement.substring(separator + 1).trim();
-        variables[name] = _ArithmeticParser(expression, variables).parse();
-      } else if (line.startsWith('OUTPUT ')) {
-        final name = line.substring(7).trim().toLowerCase();
-        output = variables[name];
-        if (output == null) throw FormatException('Variabel OUTPUT "$name" belum memiliki nilai.');
-      }
-    }
+    final allPassed =
+        results.isNotEmpty && results.every((result) => result.passed);
 
-    if (output == null) throw FormatException('Blok OUTPUT belum menghasilkan nilai.');
-    return output;
+    _showAllTestResults(results, allPassed);
   }
 
-  bool _sameNumber(num actual, dynamic expected) {
-    final expectedNumber = num.tryParse('$expected');
-    if (expectedNumber == null) return '$actual' == '$expected';
-    return (actual - expectedNumber).abs() < 0.000001;
+  void _showAllTestResults(
+    List<LogicTestResult> results,
+    bool allPassed,
+  ) {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: const Text(
+          'HASIL VALIDASI',
+          style: TextStyle(
+            color: navy,
+            fontSize: 17,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  allPassed
+                      ? 'Semua test case berhasil!'
+                      : 'Masih ada test case yang belum berhasil.',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: textGrey,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ...results.map(
+                  (result) => Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: result.passed
+                            ? const Color(0xFFEAF8F0)
+                            : const Color(0xFFFFEEEE),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            result.passed
+                                ? Icons.check_circle_rounded
+                                : Icons.cancel_rounded,
+                            color: result.passed ? success : error,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  result.testNumber == 0
+                                      ? 'Struktur Logika'
+                                      : 'Test Case ${result.testNumber}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w800,
+                                    color: navy,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  result.message,
+                                  style: const TextStyle(
+                                    color: textGrey,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                                if (result.testNumber != 0) ...[
+                                  Text(
+                                    'Expected: ${result.expected}',
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      color: textGrey,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Actual: ${result.actual}',
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      color: textGrey,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(dialogContext);
+
+                if (!allPassed) return;
+
+                setState(() => _hasPassed = true);
+
+                try {
+                  await _saveCaseProgress();
+
+                  if (!mounted) return;
+                  _showFinishDialog();
+                } catch (e) {
+                  if (!mounted) return;
+
+                  setState(() => _hasPassed = false);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Gagal menyimpan progres: $e'),
+                    ),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: allPassed ? teal : navy,
+                foregroundColor: Colors.white,
+              ),
+              child: Text(
+                allPassed ? 'FINISH' : 'PERIKSA LOGIKA LAGI',
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   // SIMPAN PROGRESS
@@ -594,7 +743,7 @@ class _RunSimulationScreenState extends State<RunSimulationScreen> {
               const SizedBox(height: 7),
               Text(
                 isCorrect
-                    ? 'Logikamu berhasil menghasilkan jawaban yang tepat.'
+                    ? 'Logikamu berhasil dijalankan. Lanjutkan validasi seluruh test case.'
                     : 'Masih ada bagian yang perlu kamu periksa.',
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 12, height: 1.5, color: textGrey),
@@ -609,12 +758,10 @@ class _RunSimulationScreenState extends State<RunSimulationScreen> {
                 ),
                 child: Column(
                   children: [
-                    _resultRow('Hasil simulasi', actualResult == null ? '-' : '$actualResult'),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 9),
-                      child: Divider(height: 1, color: borderGrey),
+                    _resultRow(
+                      'Hasil simulasi',
+                      actualResult == null ? '-' : '$actualResult',
                     ),
-                    _resultRow('Expected result', '${_testCase.expectedResult}'),
                   ],
                 ),
               ),
@@ -629,28 +776,15 @@ class _RunSimulationScreenState extends State<RunSimulationScreen> {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                    onPressed: () async {
-                    Navigator.pop(dialogContext);
+                onPressed: () {
+                Navigator.pop(dialogContext);
 
-                    if (isCorrect) {
-                      setState(() => _hasPassed = true);
-
-                      try {
-                        await _saveCaseProgress();
-
-                        if (!mounted) return;
-                        _showFinishDialog();
-                      } catch (e) {
-                        if (!mounted) return;
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Gagal menyimpan progres: $e'),
-                          ),
-                        );
-                      }
-                    }
-                  },
+                if (isCorrect) {
+                  _validateAllTestCases();
+                } else {
+                  _showInputDialog();
+                }
+              },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isCorrect ? teal : navy,
                     foregroundColor: Colors.white,
@@ -658,7 +792,7 @@ class _RunSimulationScreenState extends State<RunSimulationScreen> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: Text(
-                    isCorrect ? 'FINISH' : 'COBA LAGI',
+                    isCorrect ? 'VALIDASI SEMUA TEST CASE' : 'COBA LAGI',
                     style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: .5),
                   ),
                 ),
@@ -1091,73 +1225,3 @@ class _ProgressNumber extends StatelessWidget {
   }
 }
 
-class _ArithmeticParser {
-  final String source;
-  final Map<String, num> variables;
-  late final List<String> tokens;
-  int position = 0;
-
-  _ArithmeticParser(this.source, this.variables) {
-    final normalized = source
-        .replaceAll('×', '*')
-        .replaceAll('÷', '/')
-        .replaceAll(' ', '');
-    tokens = RegExp(r'[A-Za-z_][A-Za-z0-9_]*|\d+(?:\.\d+)?|[()+\-*/]')
-        .allMatches(normalized)
-        .map((match) => match.group(0)!)
-        .toList();
-    if (tokens.join() != normalized) {
-      throw FormatException('Ekspresi PROCESS mengandung simbol yang belum didukung.');
-    }
-  }
-
-  num parse() {
-    final value = _expression();
-    if (position != tokens.length) throw FormatException('Ekspresi tidak valid.');
-    return value;
-  }
-
-  num _expression() {
-    var value = _term();
-    while (_match('+') || _match('-')) {
-      final operator = tokens[position - 1];
-      final right = _term();
-      value = operator == '+' ? value + right : value - right;
-    }
-    return value;
-  }
-
-  num _term() {
-    var value = _factor();
-    while (_match('*') || _match('/')) {
-      final operator = tokens[position - 1];
-      final right = _factor();
-      if (operator == '/' && right == 0) throw FormatException('Tidak bisa membagi dengan nol.');
-      value = operator == '*' ? value * right : value / right;
-    }
-    return value;
-  }
-
-  num _factor() {
-    if (_match('-')) return -_factor();
-    if (_match('+')) return _factor();
-    if (_match('(')) {
-      final value = _expression();
-      if (!_match(')')) throw FormatException('Kurung ekspresi belum lengkap.');
-      return value;
-    }
-    if (position >= tokens.length) throw FormatException('Nilai ekspresi belum lengkap.');
-    final token = tokens[position++];
-    final number = num.tryParse(token);
-    if (number != null) return number;
-    final variable = variables[token.toLowerCase()];
-    if (variable == null) throw FormatException('Variabel "$token" belum memiliki nilai.');
-    return variable;
-  }
-
-  bool _match(String token) {
-    if (position >= tokens.length || tokens[position] != token) return false;
-    position++;
-    return true;
-  }
-}

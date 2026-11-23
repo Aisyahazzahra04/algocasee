@@ -370,42 +370,55 @@ class RuleOption {
   });
 }
 
-// ============================================================
-// LOGIC BUILDER
-// ============================================================
+  // ============================================================
+  // LOGIC BUILDER
+  // ============================================================
 
-class LogicBuilder {
-  final List<String> availableBlocks;
-  final List<LogicVariable> variables;
-  final List<String> expectedLogic;
+  class LogicBuilder {
+    final List<String> availableBlocks;
+    final List<LogicVariable> variables;
+    final List<String> inputOrder;
+    final List<String> expectedLogic;
 
-  LogicBuilder({
-    required this.availableBlocks,
-    required this.variables,
-    required this.expectedLogic,
-  });
+    LogicBuilder({
+      required this.availableBlocks,
+      required this.variables,
+      required this.inputOrder,
+      required this.expectedLogic,
+    });
 
-  factory LogicBuilder.fromJson(Map<String, dynamic> json) {
-    return LogicBuilder(
-      availableBlocks: List<String>.from(json['available_blocks'] ?? []),
-      variables: (json['variables'] as List? ?? [])
-          .map((item) => LogicVariable.fromJson(Map<String, dynamic>.from(item)))
-          .toList(),
-      expectedLogic: List<String>.from(json['expected_logic'] ?? []),
-    );
+    factory LogicBuilder.fromJson(Map<String, dynamic> json) {
+      return LogicBuilder(
+        availableBlocks: List<String>.from(
+          json['available_blocks'] ?? [],
+        ),
+        variables: (json['variables'] as List? ?? [])
+            .map(
+              (item) => LogicVariable.fromJson(
+                Map<String, dynamic>.from(item),
+              ),
+            )
+            .toList(),
+        inputOrder: List<String>.from(
+          json['input_order'] ?? [],
+        ),
+        expectedLogic: List<String>.from(
+          json['expected_logic'] ?? [],
+        ),
+      );
+    }
   }
-}
 
-class LogicVariable {
-  final String name;
-  final String type;
-  final String role;
+  class LogicVariable {
+    final String name;
+    final String type;
+    final String role;
 
-  LogicVariable({
-    required this.name,
-    required this.type,
-    required this.role,
-  });
+    LogicVariable({
+      required this.name,
+      required this.type,
+      required this.role,
+    });
 
   factory LogicVariable.fromJson(Map<String, dynamic> json) {
     return LogicVariable(
@@ -416,53 +429,52 @@ class LogicVariable {
   }
 }
 
-// ============================================================
+  // ============================================================
+  // TEST CASE
+  // ============================================================
 
-// TEST CASE
-// ============================================================
+  class TestCase {
+    final Map<String, dynamic> input;
+    final dynamic expectedResult;
 
-class TestCase {
-  final Map<String, dynamic> input;
-  final dynamic expectedResult;
+    TestCase({
+      required this.input,
+      required this.expectedResult,
+    });
 
-  TestCase({
-    required this.input,
-    required this.expectedResult,
-  });
+    factory TestCase.fromJson(
+      Map<String, dynamic> json,
+    ) {
+      return TestCase(
+        input: Map<String, dynamic>.from(
+          json['input'],
+        ),
 
-  factory TestCase.fromJson(
-    Map<String, dynamic> json,
-  ) {
-    return TestCase(
-      input: Map<String, dynamic>.from(
-        json['input'],
-      ),
-
-      expectedResult:
-          json['expected_result'],
-    );
+        expectedResult:
+            json['expected_result'],
+      );
+    }
   }
-}
 
-// ============================================================
-// FEEDBACK
-// ============================================================
+  // ============================================================
+  // FEEDBACK
+  // ============================================================
 
-class Feedback {
-  final String correct;
-  final String wrong;
+  class Feedback {
+    final String correct;
+    final String wrong;
 
-  Feedback({
-    required this.correct,
-    required this.wrong,
-  });
+    Feedback({
+      required this.correct,
+      required this.wrong,
+    });
 
-  factory Feedback.fromJson(
-    Map<String, dynamic> json,
-  ) {
-    return Feedback(
-      correct: json['correct'] as String,
-      wrong: json['wrong'] as String,
-    );
+    factory Feedback.fromJson(
+      Map<String, dynamic> json,
+    ) {
+      return Feedback(
+        correct: json['correct'] as String,
+        wrong: json['wrong'] as String,
+      );
+    }
   }
-}
