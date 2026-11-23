@@ -43,6 +43,103 @@ class CaseBriefingScreen extends StatelessWidget {
     Widget visual;
 
     switch (briefing.visualType) {
+    case 'garden':
+      visual = Container(
+        height: 150,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: const Color(0xFFDDF3D8),
+          border: Border.all(
+            color: const Color(0xFF398A52),
+            width: 4,
+          ),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Stack(
+          children: [
+            // UKURAN PANJANG TAMAN
+            if (briefing.facts.isNotEmpty)
+              Positioned(
+                top: 7,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: _VisualLabel(
+                    text: briefing.facts[0].value,
+                  ),
+                ),
+              ),
+
+            // UKURAN LEBAR TAMAN
+            if (briefing.facts.length > 1)
+              Positioned(
+                right: 5,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: RotatedBox(
+                    quarterTurns: 1,
+                    child: _VisualLabel(
+                      text: briefing.facts[1].value,
+                    ),
+                  ),
+                ),
+              ),
+
+            // ILUSTRASI TANAMAN
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(
+                    Icons.local_florist_rounded,
+                    color: Color(0xFFE69A45),
+                    size: 30,
+                  ),
+                  SizedBox(width: 12),
+                  Icon(
+                    Icons.grass_rounded,
+                    color: Color(0xFF398A52),
+                    size: 43,
+                  ),
+                  SizedBox(width: 12),
+                  Icon(
+                    Icons.park_rounded,
+                    color: Color(0xFF398A52),
+                    size: 38,
+                  ),
+                  SizedBox(width: 12),
+                  Icon(
+                    Icons.local_florist_rounded,
+                    color: Color(0xFFE69A45),
+                    size: 30,
+                  ),
+                ],
+              ),
+            ),
+
+            // KETERANGAN
+            const Positioned(
+              bottom: 7,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Text(
+                  'TAMAN SEKOLAH',
+                  style: TextStyle(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1,
+                    color: Color(0xFF286A3D),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+      break;
+
       case 'rectangle':
         visual = Container(
           height: 105,

@@ -67,6 +67,7 @@ class CasesScreen extends StatelessWidget {
                   CaseService.loadCase02(),
                   CaseService.loadCase03(),
                   CaseService.loadCase04(),
+                  CaseService.loadCase05(),
                 ]),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -103,6 +104,7 @@ class CasesScreen extends StatelessWidget {
                   final case02 = snapshot.data![1];
                   final case03 = snapshot.data![2];
                   final case04 = snapshot.data![3];
+                  final case05 = snapshot.data![4];
                   return ListView(
                     children: [
                       CaseItem(
@@ -178,13 +180,23 @@ class CasesScreen extends StatelessWidget {
                       },
                     ),
                       // CASE 05
-                      const CaseItem(
+                      CaseItem(
                         number: '05',
-                        title: 'Final Case',
-                        status: 'LOCKED',
-                        locked: true,
-                        accentColor: Color(0xFF89909D),
-                        imagePath: 'assets/images/cases/foto_case05.jpg',
+                        title: case05.title,
+                        status: 'AVAILABLE',
+                        locked: false,
+                        accentColor: const Color(0xFF14B8A6),
+                        imagePath: 'assets/images/foto_case05.jpg',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => CaseBriefingScreen(
+                                caseData: case05,
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   );

@@ -1,0 +1,137 @@
+
+{
+  "id": "case_05",
+  "title": "Menghitung Keliling Taman",
+  "difficulty": "Easy",
+  "briefing": {
+    "description": "Sekolah memiliki taman berbentuk persegi panjang yang akan dipasangi pagar di sekelilingnya. Sebelum memasang pagar, petugas sekolah perlu mengetahui panjang pagar yang dibutuhkan. Taman tersebut memiliki panjang 8 meter dan lebar 5 meter.",
+    "mission": "Bantu petugas sekolah menghitung keliling taman agar dapat mengetahui panjang pagar yang dibutuhkan.",
+    "visual_type": "garden",
+    "facts": [
+      {
+        "label": "Panjang taman",
+        "value": "8 meter"
+      },
+      {
+        "label": "Lebar taman",
+        "value": "5 meter"
+      }
+    ],
+    "rules": [
+      "Keliling taman dihitung dengan menjumlahkan panjang dan lebar, kemudian mengalikannya dengan 2."
+    ]
+  },
+  "problem_analysis": {
+    "question": "Apa yang perlu diketahui petugas sekolah sebelum memasang pagar taman?",
+    "options": [
+      "Luas seluruh permukaan taman.",
+      "Panjang pagar yang dibutuhkan untuk mengelilingi taman.",
+      "Jumlah tanaman yang ada di taman.",
+      "Warna pagar yang akan digunakan."
+    ],
+    "correct_answer": 1,
+    "feedback_correct": "Benar! Petugas sekolah perlu mengetahui keliling taman untuk menentukan panjang pagar yang dibutuhkan.",
+    "feedback_wrong": "Belum tepat. Perhatikan kembali tujuan pemasangan pagar di sekeliling taman."
+  },
+  "information_identification": {
+    "question": "Informasi mana saja yang diperlukan untuk menghitung keliling taman?",
+    "information": [
+      {
+        "text": "Panjang taman: 8 meter",
+        "relevant": true
+      },
+      {
+        "text": "Lebar taman: 5 meter",
+        "relevant": true
+      },
+      {
+        "text": "Jumlah tanaman di taman",
+        "relevant": false
+      },
+      {
+        "text": "Warna pagar yang digunakan",
+        "relevant": false
+      }
+    ]
+  },
+  "input_output_rules": {
+    "input": {
+      "question": "Data apa saja yang menjadi masukan untuk menghitung keliling taman?",
+      "options": [
+        "Panjang dan lebar taman.",
+        "Jumlah tanaman dan warna pagar.",
+        "Panjang pagar yang dibutuhkan."
+      ],
+      "correct_answer": 0
+    },
+    "output": {
+      "question": "Apa hasil yang ingin diperoleh dari proses perhitungan?",
+      "options": [
+        "Luas taman.",
+        "Lebar taman.",
+        "Keliling taman."
+      ],
+      "correct_answer": 2
+    },
+    "rules": {
+      "question": "Aturan apa yang digunakan untuk menghitung keliling taman berbentuk persegi panjang?",
+      "options": [
+        "Panjang dikalikan lebar.",
+        "Panjang ditambah lebar.",
+        "Panjang ditambah lebar, kemudian dikalikan 2."
+      ],
+      "correct_answers": [
+        2
+      ]
+    }
+  },
+  "logic_builder": {
+    "available_blocks": [
+      "START",
+      "DECLARE",
+      "INPUT",
+      "PROCESS",
+      "OUTPUT",
+      "END"
+    ],
+    "variables": [
+      {
+        "name": "panjang",
+        "type": "Integer",
+        "role": "input"
+      },
+      {
+        "name": "lebar",
+        "type": "Integer",
+        "role": "input"
+      },
+      {
+        "name": "keliling",
+        "type": "Integer",
+        "role": "output"
+      }
+    ],
+    "expected_logic": [
+      "START",
+      "DECLARE panjang, lebar, keliling : Integer",
+      "INPUT panjang",
+      "INPUT lebar",
+      "PROCESS keliling = 2 * (panjang + lebar)",
+      "OUTPUT keliling",
+      "END"
+    ]
+  },
+  "test_cases": [
+    {
+      "input": {
+        "panjang": 8,
+        "lebar": 5
+      },
+      "expected_result": 26
+    }
+  ],
+  "feedback": {
+    "correct": "Hebat! Kamu berhasil menghitung keliling taman. Sekarang petugas sekolah mengetahui panjang pagar yang dibutuhkan.",
+    "wrong": "Hasilnya belum tepat. Periksa kembali panjang dan lebar taman, lalu jumlahkan keduanya sebelum mengalikannya dengan 2."
+  }
+}
