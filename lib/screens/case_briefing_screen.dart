@@ -35,6 +35,10 @@ class CaseBriefingScreen extends StatelessWidget {
       return Icons.sell_outlined;
     }
 
+    if (text.contains('nilai')) {
+      return Icons.grade_outlined;
+    }
+
     return Icons.info_outline;
   }
 
@@ -331,6 +335,104 @@ class CaseBriefingScreen extends StatelessWidget {
                 ),
               );
               break;
+
+                case 'school':
+          visual = Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFFEAF2FF),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: const Color(0xFFB9D0F5),
+              ),
+            ),
+            child: Column(
+              children: [
+                const Icon(
+                  Icons.school_rounded,
+                  size: 42,
+                  color: Color(0xFF3B82F6),
+                ),
+
+                const SizedBox(height: 8),
+
+                const Text(
+                  'PENENTUAN KELULUSAN',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1,
+                    color: navy,
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: _ScoreCard(
+                        label: 'Nilai Ujian',
+                        value: briefing.facts.isNotEmpty
+                            ? briefing.facts[0].value
+                            : '-',
+                        color: const Color(0xFF3B82F6),
+                        icon: Icons.assignment_rounded,
+                      ),
+                    ),
+
+                    const SizedBox(width: 10),
+
+                    Expanded(
+                      child: _ScoreCard(
+                        label: 'Nilai Minimum',
+                        value: briefing.facts.length > 1
+                            ? briefing.facts[1].value
+                            : '-',
+                        color: const Color(0xFF14B8A6),
+                        icon: Icons.flag_rounded,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 14),
+
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(11),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.compare_arrows_rounded,
+                        color: navy,
+                        size: 20,
+                      ),
+                      SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          'Bandingkan nilai ujian dengan batas kelulusan',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: navy,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+          break;
 
       default:
         visual = Container(
@@ -1052,6 +1154,64 @@ class _SectionTitle extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 9,
                 color: textGrey,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+  // ============================================================
+  // SCORE CARD - CASE 06
+  // ============================================================
+
+  class _ScoreCard extends StatelessWidget {
+    final String label;
+    final String value;
+    final Color color;
+    final IconData icon;
+
+    const _ScoreCard({
+      required this.label,
+      required this.value,
+      required this.color,
+      required this.icon,
+    });
+
+    @override
+    Widget build(BuildContext context) {
+      return Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: 14,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          children: [
+            Icon(
+              icon,
+              color: color,
+              size: 25,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 10,
+                color: textGrey,
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+                color: color,
               ),
             ),
           ],

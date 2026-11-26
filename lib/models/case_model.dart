@@ -373,7 +373,6 @@ class RuleOption {
   // ============================================================
   // LOGIC BUILDER
   // ============================================================
-
   class LogicBuilder {
     final List<String> availableBlocks;
     final List<LogicVariable> variables;
@@ -388,26 +387,34 @@ class RuleOption {
     });
 
     factory LogicBuilder.fromJson(Map<String, dynamic> json) {
+      final variables = (json['variables'] as List? ?? [])
+          .map(
+            (item) => LogicVariable.fromJson(
+              Map<String, dynamic>.from(item),
+            ),
+          )
+          .toList();
+
+      final inputOrder = json['input_order'] != null
+          ? List<String>.from(json['input_order'])
+          : variables
+              .where((variable) => variable.role.toLowerCase() == 'input')
+              .map((variable) => variable.name)
+              .toList();
+
       return LogicBuilder(
         availableBlocks: List<String>.from(
           json['available_blocks'] ?? [],
         ),
-        variables: (json['variables'] as List? ?? [])
-            .map(
-              (item) => LogicVariable.fromJson(
-                Map<String, dynamic>.from(item),
-              ),
-            )
-            .toList(),
-        inputOrder: List<String>.from(
-          json['input_order'] ?? [],
-        ),
+        variables: variables,
+        inputOrder: inputOrder,
         expectedLogic: List<String>.from(
           json['expected_logic'] ?? [],
         ),
       );
     }
   }
+
 
   class LogicVariable {
     final String name;

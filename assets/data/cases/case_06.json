@@ -1,0 +1,153 @@
+
+{
+  "id": "case_06",
+  "title": "Menentukan Kelulusan Siswa",
+  "difficulty": "Medium",
+  "briefing": {
+    "description": "Seorang siswa telah mengikuti ujian dan ingin mengetahui apakah ia dinyatakan lulus. Sekolah menetapkan nilai minimum kelulusan sebesar 75. Siswa dinyatakan lulus apabila memperoleh nilai minimal 75.",
+    "mission": "Bantu menentukan status kelulusan siswa berdasarkan nilai ujian yang diperoleh.",
+    "visual_type": "school",
+    "facts": [
+      {
+        "label": "Nilai ujian",
+        "value": "85"
+      },
+      {
+        "label": "Nilai minimum kelulusan",
+        "value": "75"
+      }
+    ],
+    "rules": [
+      "Jika nilai ujian lebih besar atau sama dengan 75, siswa dinyatakan Lulus.",
+      "Jika nilai ujian kurang dari 75, siswa dinyatakan Belum Lulus."
+    ]
+  },
+  "problem_analysis": {
+    "question": "Apa yang perlu ditentukan untuk mengetahui hasil kelulusan siswa?",
+    "options": [
+      "Jumlah mata pelajaran yang diikuti.",
+      "Status kelulusan berdasarkan nilai ujian.",
+      "Nama guru yang mengajar.",
+      "Jumlah siswa di kelas."
+    ],
+    "correct_answer": 1,
+    "feedback_correct": "Benar! Kita perlu menentukan status kelulusan berdasarkan nilai ujian siswa.",
+    "feedback_wrong": "Belum tepat. Perhatikan kembali tujuan untuk mengetahui apakah siswa lulus atau belum."
+  },
+  "information_identification": {
+    "question": "Informasi mana saja yang diperlukan untuk menentukan kelulusan siswa?",
+    "information": [
+      {
+        "text": "Nilai ujian siswa",
+        "relevant": true
+      },
+      {
+        "text": "Nama guru mata pelajaran",
+        "relevant": false
+      },
+      {
+        "text": "Nilai minimum kelulusan sebesar 75",
+        "relevant": true
+      },
+      {
+        "text": "Warna seragam siswa",
+        "relevant": false
+      }
+    ]
+  },
+  "input_output_rules": {
+    "input": {
+      "question": "Data apa yang menjadi masukan untuk menentukan kelulusan siswa?",
+      "options": [
+        "Nilai ujian siswa.",
+        "Status kelulusan siswa.",
+        "Nama guru mata pelajaran."
+      ],
+      "correct_answer": 0
+    },
+    "output": {
+      "question": "Apa hasil yang ingin diperoleh dari proses penentuan kelulusan?",
+      "options": [
+        "Nilai ujian siswa.",
+        "Nama siswa.",
+        "Status kelulusan siswa."
+      ],
+      "correct_answer": 2
+    },
+    "rules": {
+      "question": "Aturan apa yang digunakan untuk menentukan kelulusan siswa?",
+      "options": [
+        "Jika nilai lebih besar atau sama dengan 75, siswa dinyatakan Lulus.",
+        "Jika nilai kurang dari 75, siswa dinyatakan Lulus.",
+        "Semua siswa dinyatakan Lulus."
+      ],
+      "correct_answers": [
+        0
+      ]
+    }
+  },
+  "logic_builder": {
+    "available_blocks": [
+      "START",
+      "DECLARE",
+      "INPUT",
+      "PROCESS",
+      "DECISION",
+      "OUTPUT",
+      "END"
+    ],
+    "variables": [
+      {
+        "name": "nilai",
+        "type": "Integer",
+        "role": "input"
+      },
+      {
+        "name": "status",
+        "type": "String",
+        "role": "output"
+      }
+    ],
+    "input_order": [
+      "nilai"
+    ],
+    "expected_logic": [
+      "START",
+      "DECLARE nilai : Integer",
+      "DECLARE status : String",
+      "INPUT nilai",
+      "DECISION nilai >= 75",
+      "TRUE:",
+      "PROCESS status = \"Lulus\"",
+      "FALSE:",
+      "PROCESS status = \"Belum Lulus\"",
+      "END_DECISION",
+      "OUTPUT status",
+      "END"
+    ]
+  },
+  "test_cases": [
+    {
+      "input": {
+        "nilai": 85
+      },
+      "expected_result": "Lulus"
+    },
+    {
+      "input": {
+        "nilai": 70
+      },
+      "expected_result": "Belum Lulus"
+    },
+    {
+      "input": {
+        "nilai": 75
+      },
+      "expected_result": "Lulus"
+    }
+  ],
+  "feedback": {
+    "correct": "Hebat! Kamu berhasil menentukan kelulusan siswa menggunakan logika percabangan. Kamu sudah memahami bagaimana satu kondisi dapat menghasilkan dua kemungkinan.",
+    "wrong": "Hasilnya belum tepat. Periksa kembali kondisi nilai >= 75 dan pastikan cabang TRUE serta FALSE menghasilkan status yang sesuai."
+  }
+}

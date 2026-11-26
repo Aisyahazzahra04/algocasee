@@ -161,8 +161,14 @@ class LogicChecker {
               addError('Variabel hasil "$target" belum dideklarasikan.', index);
             }
 
+            // Abaikan teks di dalam tanda kutip karena bukan nama variabel.
+            final expressionWithoutText = expression.replaceAll(
+              RegExp(r"""(['"])[^'"]*\1"""),
+              '',
+            );
+            
             final identifiers = RegExp(r'[a-zA-Z_][a-zA-Z0-9_]*')
-                .allMatches(expression);
+                .allMatches(expressionWithoutText);
 
             for (final match in identifiers) {
               final identifier = match.group(0)!.toLowerCase();
