@@ -70,6 +70,7 @@ class CasesScreen extends StatelessWidget {
                   CaseService.loadCase05(),
                   CaseService.loadCase06(),
                   CaseService.loadCase07(),
+                  CaseService.loadCase08(),
                 ]),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -109,6 +110,7 @@ class CasesScreen extends StatelessWidget {
                   final case05 = snapshot.data![4];
                   final case06 = snapshot.data![5];
                   final case07 = snapshot.data![6];
+                  final case08 = snapshot.data![7];
                   return ListView(
                     children: [
                       CaseItem(
@@ -221,6 +223,7 @@ class CasesScreen extends StatelessWidget {
                           );
                         },
                       ),
+                      //CASE07
                       CaseItem(
                       number: '07',
                       title: case07.title,
@@ -234,6 +237,25 @@ class CasesScreen extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (_) => CaseBriefingScreen(
                               caseData: case07,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    //CASE08
+                    CaseItem(
+                      number: '08',
+                      title: case08.title,
+                      status: 'AVAILABLE',
+                      locked: false,
+                      accentColor: const Color(0xFF2585C5),
+                      imagePath: 'assets/images/foto_case08.jpg',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => CaseBriefingScreen(
+                              caseData: case08,
                             ),
                           ),
                         );

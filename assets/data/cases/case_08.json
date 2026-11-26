@@ -1,0 +1,187 @@
+
+{
+  "id": "case_08",
+  "title": "Menghitung Biaya Parkir Kendaraan",
+  "difficulty": "Medium",
+  "briefing": {
+    "description": "Sebuah pusat perbelanjaan menerapkan tarif parkir berdasarkan lama kendaraan berada di area parkir. Pengunjung perlu memasukkan jam masuk dan jam keluar untuk mengetahui total biaya parkir yang harus dibayar.",
+    "mission": "Bantu sistem parkir menghitung lama parkir dan menentukan total biaya berdasarkan aturan tarif yang berlaku.",
+    "visual_type": "money",
+    "facts": [
+      {
+        "label": "Tarif parkir maksimal 2 jam",
+        "value": "Rp2.000 per jam"
+      },
+      {
+        "label": "Tarif parkir lebih dari 2 jam",
+        "value": "Rp3.000 per jam"
+      },
+      {
+        "label": "Contoh waktu parkir",
+        "value": "08.00 - 10.00"
+      }
+    ],
+    "rules": [
+      "Jam masuk dan jam keluar menggunakan bilangan bulat.",
+      "Parkir hanya dihitung pada hari yang sama.",
+      "Lama parkir dihitung dari jam keluar dikurangi jam masuk.",
+      "Jika lama parkir maksimal 2 jam, tarifnya Rp2.000 per jam.",
+      "Jika lama parkir lebih dari 2 jam, tarifnya Rp3.000 per jam.",
+      "Tarif dikalikan dengan seluruh lama parkir."
+    ]
+  },
+  "problem_analysis": {
+    "question": "Apa yang harus dilakukan sistem untuk menentukan biaya parkir pengunjung?",
+    "options": [
+      "Menghitung jumlah kendaraan yang masuk dan keluar.",
+      "Menghitung lama parkir, kemudian menentukan tarif berdasarkan durasinya.",
+      "Menghitung biaya berdasarkan jenis kendaraan.",
+      "Menentukan biaya hanya berdasarkan jam masuk."
+    ],
+    "correct_answer": 1,
+    "feedback_correct": "Benar! Sistem perlu menghitung lama parkir terlebih dahulu, kemudian menentukan tarif sesuai kondisi.",
+    "feedback_wrong": "Perhatikan bahwa biaya parkir ditentukan berdasarkan lama kendaraan berada di area parkir."
+  },
+  "information_identification": {
+    "question": "Informasi apa saja yang diperlukan untuk menyelesaikan masalah ini?",
+    "information": [
+      {
+        "text": "Jam kendaraan masuk area parkir.",
+        "relevant": true
+      },
+      {
+        "text": "Jam kendaraan keluar area parkir.",
+        "relevant": true
+      },
+      {
+        "text": "Tarif parkir berdasarkan lama parkir.",
+        "relevant": true
+      },
+      {
+        "text": "Warna kendaraan pengunjung.",
+        "relevant": false
+      },
+      {
+        "text": "Nama pusat perbelanjaan.",
+        "relevant": false
+      }
+    ]
+  },
+  "input_output_rules": {
+    "input": {
+      "question": "Data apa saja yang perlu dimasukkan ke dalam sistem?",
+      "options": [
+        "lamaParkir dan totalBiaya",
+        "totalBiaya dan tarifParkir",
+        "jamMasuk dan jamKeluar",
+        "namaPengunjung dan jenisKendaraan"
+      ],
+      "correct_answer": 2
+    },
+    "output": {
+      "question": "Informasi apa yang harus ditampilkan sebagai hasil akhir?",
+      "options": [
+        "Total biaya parkir yang harus dibayar.",
+        "Jam kendaraan masuk.",
+        "Tarif parkir per jam saja.",
+        "Nama pengunjung."
+      ],
+      "correct_answer": 0
+    },
+    "rules": {
+      "question": "Aturan apa saja yang harus diterapkan dalam perhitungan biaya parkir?",
+      "options": [
+        "Menghitung lama parkir dari jam keluar dikurangi jam masuk.",
+        "Jika lama parkir maksimal 2 jam, gunakan tarif Rp2.000 per jam.",
+        "Jika lama parkir lebih dari 2 jam, gunakan tarif Rp3.000 per jam.",
+        "Menentukan biaya berdasarkan warna kendaraan."
+      ],
+      "correct_answers": [0, 1, 2]
+    }
+  },
+  "logic_builder": {
+    "available_blocks": [
+      "START",
+      "DECLARE",
+      "INPUT",
+      "PROCESS",
+      "DECISION",
+      "TRUE",
+      "FALSE",
+      "END_DECISION",
+      "OUTPUT",
+      "END"
+    ],
+    "variables": [
+      {
+        "name": "jamMasuk",
+        "type": "Integer",
+        "role": "input"
+      },
+      {
+        "name": "jamKeluar",
+        "type": "Integer",
+        "role": "input"
+      },
+      {
+        "name": "lamaParkir",
+        "type": "Integer",
+        "role": "process"
+      },
+      {
+        "name": "totalBiaya",
+        "type": "Integer",
+        "role": "output"
+      }
+    ],
+    "input_order": [
+      "jamMasuk",
+      "jamKeluar"
+    ],
+    "expected_logic": [
+      "START",
+      "DECLARE jamMasuk : Integer",
+      "DECLARE jamKeluar : Integer",
+      "DECLARE lamaParkir : Integer",
+      "DECLARE totalBiaya : Integer",
+      "INPUT jamMasuk",
+      "INPUT jamKeluar",
+      "PROCESS lamaParkir = jamKeluar - jamMasuk",
+      "DECISION lamaParkir <= 2",
+      "TRUE:",
+      "PROCESS totalBiaya = lamaParkir * 2000",
+      "FALSE:",
+      "PROCESS totalBiaya = lamaParkir * 3000",
+      "END_DECISION",
+      "OUTPUT totalBiaya",
+      "END"
+    ]
+  },
+  "test_cases": [
+    {
+      "input": {
+        "jamMasuk": 8,
+        "jamKeluar": 10
+      },
+      "expected_result": 4000
+    },
+    {
+      "input": {
+        "jamMasuk": 9,
+        "jamKeluar": 12
+      },
+      "expected_result": 9000
+    },
+    {
+      "input": {
+        "jamMasuk": 10,
+        "jamKeluar": 15
+      },
+      "expected_result": 15000
+    }
+  ],
+  "feedback": {
+    "correct": "Hebat! Kamu berhasil menyusun logika untuk menghitung biaya parkir berdasarkan lama parkir dan aturan tarif.",
+    "wrong": "Belum tepat. Periksa kembali perhitungan lama parkir dan kondisi penentuan tarif."
+  }
+}
