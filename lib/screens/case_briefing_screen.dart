@@ -336,6 +336,17 @@ class CaseBriefingScreen extends StatelessWidget {
               );
               break;
 
+            case 'late_fee':
+              visual = _LateFeeVisual(
+                daysLate: briefing.facts.length > 1
+                    ? briefing.facts[1].value
+                    : '0 hari',
+                finePerDay: briefing.facts.isNotEmpty
+                    ? briefing.facts[0].value
+                    : 'Rp0',
+              );
+              break;
+
                 case 'school':
           visual = Container(
             width: double.infinity,
@@ -1219,3 +1230,217 @@ class _SectionTitle extends StatelessWidget {
       );
     }
   }
+
+
+class _LateFeeVisual extends StatelessWidget {
+  final String daysLate;
+  final String finePerDay;
+
+  const _LateFeeVisual({
+    required this.daysLate,
+    required this.finePerDay,
+  });
+
+  int _getNumber(String value) {
+    return int.tryParse(
+          value.replaceAll(RegExp(r'[^0-9]'), ''),
+        ) ??
+        0;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final days = _getNumber(daysLate);
+    final fine = _getNumber(finePerDay);
+    final total = days * fine;
+
+    final totalText =
+        'Rp${total.toString().replaceAllMapped(
+              RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+              (match) => '${match[1]}.',
+            )}';
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1EDFA),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFFDDD2F1),
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE2D8F4),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.menu_book_rounded,
+                  color: Color(0xFF8061B5),
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 11),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'PENGEMBALIAN BUKU',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: .8,
+                        color: Color(0xFF69518F),
+                      ),
+                    ),
+                    SizedBox(height: 3),
+                    Text(
+                      'Perhitungan denda perpustakaan',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: textGrey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 18),
+
+          Row(
+            children: [
+              Expanded(
+                child: _LateFeeItem(
+                  icon: Icons.calendar_month_rounded,
+                  label: 'Hari terlambat',
+                  value: daysLate,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _LateFeeItem(
+                  icon: Icons.payments_outlined,
+                  label: 'Denda per hari',
+                  value: finePerDay,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(
+              vertical: 15,
+              horizontal: 12,
+            ),
+            decoration: BoxDecoration(
+              color: const Color(0xFF8061B5),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              children: [
+                const Text(
+                  'TOTAL DENDA',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1,
+                    color: Colors.white70,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  totalText,
+                  style: const TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '$days × Rp${fine.toString()}',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LateFeeItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+
+  const _LateFeeItem({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(
+        minHeight: 100,
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 8,
+        vertical: 12,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            size: 23,
+            color: const Color(0xFF8061B5),
+          ),
+          const SizedBox(height: 7),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 10,
+              color: textGrey,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            value,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+              color: navy,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+

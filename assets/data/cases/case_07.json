@@ -1,0 +1,151 @@
+
+{
+  "id": "case_07",
+  "title": "Menghitung Denda Perpustakaan",
+  "difficulty": "Medium",
+  "briefing": {
+    "description": "Seorang siswa meminjam buku dari perpustakaan sekolah. Ketika mengembalikan buku, ternyata siswa tersebut terlambat dari batas waktu pengembalian. Perpustakaan menetapkan denda sebesar Rp1.000 untuk setiap hari keterlambatan.",
+    "mission": "Bantu menghitung total denda yang harus dibayarkan siswa berdasarkan jumlah hari keterlambatan.",
+    "visual_type": "late_fee",
+    "facts": [
+      {
+        "label": "Denda per hari",
+        "value": "Rp1.000"
+      },
+      {
+        "label": "Hari keterlambatan",
+        "value": "2 hari"
+      }
+    ],
+    "rules": [
+      "Jika siswa tidak terlambat, total denda adalah Rp0.",
+      "Jika siswa terlambat, total denda dihitung dari jumlah hari keterlambatan dikalikan Rp1.000."
+    ]
+  },
+  "problem_analysis": {
+    "question": "Apa yang harus ditentukan dari permasalahan tersebut?",
+    "options": [
+      "Jumlah buku yang dipinjam siswa.",
+      "Nama petugas perpustakaan.",
+      "Total denda berdasarkan jumlah hari keterlambatan.",
+      "Jumlah siswa yang mengunjungi perpustakaan."
+    ],
+    "correct_answer": 2,
+    "feedback_correct": "Benar! Kita perlu menghitung total denda berdasarkan jumlah hari keterlambatan.",
+    "feedback_wrong": "Belum tepat. Perhatikan kembali tujuan permasalahan, yaitu menentukan total denda yang harus dibayarkan."
+  },
+  "information_identification": {
+    "question": "Informasi mana saja yang diperlukan untuk menghitung denda perpustakaan?",
+    "information": [
+      {
+        "text": "Jumlah hari keterlambatan",
+        "relevant": true
+      },
+      {
+        "text": "Besarnya denda Rp1.000 per hari",
+        "relevant": true
+      },
+      {
+        "text": "Nama petugas perpustakaan",
+        "relevant": false
+      },
+      {
+        "text": "Warna sampul buku",
+        "relevant": false
+      }
+    ]
+  },
+  "input_output_rules": {
+    "input": {
+      "question": "Data apa yang dimasukkan untuk menghitung denda?",
+      "options": [
+        "Total denda.",
+        "Jumlah hari keterlambatan.",
+        "Nama petugas perpustakaan."
+      ],
+      "correct_answer": 1
+    },
+    "output": {
+      "question": "Apa hasil yang ingin diperoleh dari proses perhitungan?",
+      "options": [
+        "Total denda yang harus dibayarkan.",
+        "Jumlah buku yang dipinjam.",
+        "Jumlah hari keterlambatan."
+      ],
+      "correct_answer": 0
+    },
+    "rules": {
+      "question": "Aturan mana yang digunakan untuk menghitung denda?",
+      "options": [
+        "Jika tidak terlambat, siswa tetap membayar Rp1.000.",
+        "Semua siswa membayar denda Rp5.000.",
+        "Jika terlambat, denda dihitung dari jumlah hari dikalikan Rp1.000."
+      ],
+      "correct_answers": [2]
+    }
+  },
+  "logic_builder": {
+    "available_blocks": [
+      "START",
+      "DECLARE",
+      "INPUT",
+      "PROCESS",
+      "DECISION",
+      "OUTPUT",
+      "END"
+    ],
+    "variables": [
+      {
+        "name": "hariTerlambat",
+        "type": "Integer",
+        "role": "input"
+      },
+      {
+        "name": "totalDenda",
+        "type": "Integer",
+        "role": "output"
+      }
+    ],
+    "input_order": [
+      "hariTerlambat"
+    ],
+    "expected_logic": [
+      "START",
+      "DECLARE hariTerlambat : Integer",
+      "DECLARE totalDenda : Integer",
+      "INPUT hariTerlambat",
+      "DECISION hariTerlambat > 0",
+      "TRUE:",
+      "PROCESS totalDenda = hariTerlambat * 1000",
+      "FALSE:",
+      "PROCESS totalDenda = 0",
+      "END_DECISION",
+      "OUTPUT totalDenda",
+      "END"
+    ]
+  },
+  "test_cases": [
+    {
+      "input": {
+        "hariTerlambat": 0
+      },
+      "expected_result": 0
+    },
+    {
+      "input": {
+        "hariTerlambat": 2
+      },
+      "expected_result": 2000
+    },
+    {
+      "input": {
+        "hariTerlambat": 5
+      },
+      "expected_result": 5000
+    }
+  ],
+  "feedback": {
+    "correct": "Hebat! Kamu berhasil menghitung denda perpustakaan menggunakan percabangan dan operasi perkalian. Kamu sudah memahami bagaimana kondisi memengaruhi hasil perhitungan.",
+    "wrong": "Hasilnya belum tepat. Periksa kembali kondisi hariTerlambat > 0 dan pastikan perhitungan denda menggunakan perkalian Rp1.000 dengan jumlah hari keterlambatan."
+  }
+}
