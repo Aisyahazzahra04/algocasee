@@ -1,0 +1,241 @@
+
+{
+  "id": "case_10",
+  "title": "Menentukan Total Biaya Pengiriman Paket",
+  "difficulty": "Hard",
+  "briefing": {
+    "description": "Sebuah jasa pengiriman menyediakan dua jenis layanan, yaitu reguler dan express. Biaya pengiriman ditentukan berdasarkan jenis layanan, berat paket, dan jarak pengiriman. Paket dengan berat lebih dari 5 kg mendapatkan biaya tambahan sebesar Rp10.000, sedangkan pengiriman dengan jarak lebih dari 10 km mendapatkan biaya tambahan sebesar Rp5.000.",
+    "mission": "Bantu sistem jasa pengiriman menghitung total biaya yang harus dibayar berdasarkan jenis layanan, berat paket, dan jarak pengiriman.",
+    "visual_type": "delivery",
+    "facts": [
+      {
+        "label": "Biaya layanan reguler",
+        "value": "Rp8.000"
+      },
+      {
+        "label": "Biaya layanan express",
+        "value": "Rp15.000"
+      },
+      {
+        "label": "Tambahan berat paket",
+        "value": "Rp10.000 jika berat > 5 kg"
+      },
+      {
+        "label": "Tambahan jarak",
+        "value": "Rp5.000 jika jarak > 10 km"
+      }
+    ],
+    "rules": [
+      "Jenis layanan dimasukkan menggunakan tipe data String.",
+      "Jenis layanan hanya terdiri dari reguler atau express.",
+      "Berat paket dimasukkan menggunakan tipe data Integer dalam kilogram.",
+      "Jarak pengiriman dimasukkan menggunakan tipe data Integer dalam kilometer.",
+      "Jika jenis layanan adalah express, biaya dasar sebesar Rp15.000.",
+      "Jika jenis layanan adalah reguler, biaya dasar sebesar Rp8.000.",
+      "Jika berat paket lebih dari 5 kg, biaya tambahan berat sebesar Rp10.000.",
+      "Jika berat paket 5 kg atau kurang, tidak ada biaya tambahan berat.",
+      "Jika jarak pengiriman lebih dari 10 km, biaya tambahan jarak sebesar Rp5.000.",
+      "Jika jarak pengiriman 10 km atau kurang, tidak ada biaya tambahan jarak.",
+      "Total biaya merupakan penjumlahan biaya dasar, tambahan berat, dan tambahan jarak."
+    ]
+  },
+  "problem_analysis": {
+    "question": "Apa yang harus dilakukan sistem untuk menentukan total biaya pengiriman paket?",
+    "options": [
+      "Menghitung jumlah kurir yang bertugas.",
+      "Menentukan biaya hanya berdasarkan berat paket.",
+      "Menentukan biaya berdasarkan jenis layanan, berat paket, dan jarak pengiriman.",
+      "Menghitung jumlah paket yang dikirim."
+    ],
+    "correct_answer": 2,
+    "feedback_correct": "Benar! Sistem harus memeriksa jenis layanan, berat paket, dan jarak pengiriman untuk menghitung total biaya.",
+    "feedback_wrong": "Perhatikan bahwa total biaya dipengaruhi oleh tiga informasi, yaitu jenis layanan, berat paket, dan jarak pengiriman."
+  },
+  "information_identification": {
+    "question": "Informasi apa saja yang diperlukan untuk menghitung biaya pengiriman?",
+    "information": [
+      {
+        "text": "Jenis layanan pengiriman.",
+        "relevant": true
+      },
+      {
+        "text": "Berat paket.",
+        "relevant": true
+      },
+      {
+        "text": "Jarak pengiriman.",
+        "relevant": true
+      },
+      {
+        "text": "Warna kemasan paket.",
+        "relevant": false
+      },
+      {
+        "text": "Nama kurir yang mengantar.",
+        "relevant": false
+      }
+    ]
+  },
+  "input_output_rules": {
+    "input": {
+      "question": "Data apa saja yang perlu dimasukkan ke dalam sistem?",
+      "options": [
+        "totalBiaya dan namaKurir",
+        "namaPengirim dan warnaPaket",
+        "biayaDasar dan tambahanBerat",
+        "jenisLayanan, berat, dan jarak"
+      ],
+      "correct_answer": 3
+    },
+    "output": {
+      "question": "Informasi apa yang harus ditampilkan sebagai hasil akhir?",
+      "options": [
+        "Nama kurir yang bertugas.",
+        "Total biaya pengiriman yang harus dibayar.",
+        "Jenis layanan yang tersedia.",
+        "Berat paket dan jarak pengiriman."
+      ],
+      "correct_answer": 1
+    },
+    "rules": {
+      "question": "Aturan apa saja yang harus diterapkan untuk menghitung biaya pengiriman?",
+      "options": [
+        "Biaya pengiriman ditentukan berdasarkan warna kemasan.",
+        "Jika jarak lebih dari 10 km, tambahan biaya Rp5.000.",
+        "Jika jenis layanan reguler, biaya dasar Rp8.000.",
+        "Total biaya dihitung dari penjumlahan seluruh komponen biaya.",
+        "Jika jenis layanan express, biaya dasar Rp15.000.",
+        "Jika berat lebih dari 5 kg, tambahan biaya Rp10.000."
+      ],
+      "correct_answers": [1, 2, 3, 4, 5]
+    }
+  },
+  "logic_builder": {
+    "available_blocks": [
+      "START",
+      "DECLARE",
+      "INPUT",
+      "PROCESS",
+      "DECISION",
+      "TRUE",
+      "FALSE",
+      "END_DECISION",
+      "OUTPUT",
+      "END"
+    ],
+    "variables": [
+      {
+        "name": "jenisLayanan",
+        "type": "String",
+        "role": "input"
+      },
+      {
+        "name": "berat",
+        "type": "Integer",
+        "role": "input"
+      },
+      {
+        "name": "jarak",
+        "type": "Integer",
+        "role": "input"
+      },
+      {
+        "name": "biayaDasar",
+        "type": "Integer",
+        "role": "process"
+      },
+      {
+        "name": "tambahanBerat",
+        "type": "Integer",
+        "role": "process"
+      },
+      {
+        "name": "tambahanJarak",
+        "type": "Integer",
+        "role": "process"
+      },
+      {
+        "name": "totalBiaya",
+        "type": "Integer",
+        "role": "output"
+      }
+    ],
+    "input_order": [
+      "jenisLayanan",
+      "berat",
+      "jarak"
+    ],
+    "expected_logic": [
+      "START",
+      "DECLARE jenisLayanan : String",
+      "DECLARE berat : Integer",
+      "DECLARE jarak : Integer",
+      "DECLARE biayaDasar : Integer",
+      "DECLARE tambahanBerat : Integer",
+      "DECLARE tambahanJarak : Integer",
+      "DECLARE totalBiaya : Integer",
+      "INPUT jenisLayanan",
+      "INPUT berat",
+      "INPUT jarak",
+      "DECISION jenisLayanan == \"express\"",
+      "TRUE:",
+      "PROCESS biayaDasar = 15000",
+      "FALSE:",
+      "PROCESS biayaDasar = 8000",
+      "END_DECISION",
+      "DECISION berat > 5",
+      "TRUE:",
+      "PROCESS tambahanBerat = 10000",
+      "FALSE:",
+      "PROCESS tambahanBerat = 0",
+      "END_DECISION",
+      "DECISION jarak > 10",
+      "TRUE:",
+      "PROCESS tambahanJarak = 5000",
+      "FALSE:",
+      "PROCESS tambahanJarak = 0",
+      "END_DECISION",
+      "PROCESS totalBiaya = biayaDasar + tambahanBerat + tambahanJarak",
+      "OUTPUT totalBiaya",
+      "END"
+    ]
+  },
+  "test_cases": [
+    {
+      "input": {
+        "jenisLayanan": "reguler",
+        "berat": 3,
+        "jarak": 5
+      },
+      "expected_result": 8000
+    },
+    {
+      "input": {
+        "jenisLayanan": "express",
+        "berat": 7,
+        "jarak": 5
+      },
+      "expected_result": 25000
+    },
+    {
+      "input": {
+        "jenisLayanan": "reguler",
+        "berat": 3,
+        "jarak": 15
+      },
+      "expected_result": 13000
+    },
+    {
+      "input": {
+        "jenisLayanan": "express",
+        "berat": 8,
+        "jarak": 15
+      },
+      "expected_result": 30000
+    }
+  ],
+  "feedback": {
+    "correct": "Hebat! Kamu berhasil menghitung total biaya pengiriman dengan menggunakan tipe data String, Integer, dan tiga percabangan IF ELSE.",
+    "wrong": "Belum tepat. Periksa kembali jenis layanan, batas berat paket, batas jarak pengiriman, dan penjumlahan seluruh komponen biaya."
+  }
+}

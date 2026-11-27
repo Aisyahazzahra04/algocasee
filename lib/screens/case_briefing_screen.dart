@@ -564,6 +564,148 @@ class CaseBriefingScreen extends StatelessWidget {
               ),
             );
             break;
+          case 'delivery':
+            visual = Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: const Color(0xFFEAF7F6),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: const Color(0xFFB9E2DC),
+                ),
+              ),
+              child: Column(
+                children: [
+                  const Icon(
+                    Icons.local_shipping_rounded,
+                    size: 42,
+                    color: Color(0xFF14A6A0),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  const Text(
+                    'BIAYA PENGIRIMAN PAKET',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1,
+                      color: navy,
+                    ),
+                  ),
+
+                  const SizedBox(height: 5),
+
+                  const Text(
+                    'Biaya ditentukan berdasarkan layanan, berat, dan jarak',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: textGrey,
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _MoneyItem(
+                          icon: Icons.local_shipping_outlined,
+                          label: briefing.facts.isNotEmpty
+                              ? briefing.facts[0].label
+                              : 'Layanan reguler',
+                          value: briefing.facts.isNotEmpty
+                              ? briefing.facts[0].value
+                              : '-',
+                        ),
+                      ),
+
+                      const SizedBox(width: 10),
+
+                      Expanded(
+                        child: _MoneyItem(
+                          icon: Icons.bolt_rounded,
+                          label: briefing.facts.length > 1
+                              ? briefing.facts[1].label
+                              : 'Layanan express',
+                          value: briefing.facts.length > 1
+                              ? briefing.facts[1].value
+                              : '-',
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _MoneyItem(
+                          icon: Icons.scale_outlined,
+                          label: briefing.facts.length > 2
+                              ? briefing.facts[2].label
+                              : 'Tambahan berat',
+                          value: briefing.facts.length > 2
+                              ? briefing.facts[2].value
+                              : '-',
+                        ),
+                      ),
+
+                      const SizedBox(width: 10),
+
+                      Expanded(
+                        child: _MoneyItem(
+                          icon: Icons.route_outlined,
+                          label: briefing.facts.length > 3
+                              ? briefing.facts[3].label
+                              : 'Tambahan jarak',
+                          value: briefing.facts.length > 3
+                              ? briefing.facts[3].value
+                              : '-',
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.calculate_outlined,
+                          size: 18,
+                          color: Color(0xFF14A6A0),
+                        ),
+                        SizedBox(width: 7),
+                        Flexible(
+                          child: Text(
+                            'Total biaya = biaya dasar + biaya tambahan',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              color: navy,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+            break;
 
 
       default:

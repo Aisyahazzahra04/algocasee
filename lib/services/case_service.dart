@@ -44,8 +44,12 @@ class CaseService {
   return loadCase('assets/data/cases/case_08.json');
   }
 
-    static Future<CaseModel> loadCase09() async {
+  static Future<CaseModel> loadCase09() async {
   return loadCase('assets/data/cases/case_09.json');
+  }
+
+  static Future<CaseModel> loadCase10() async {
+  return loadCase('assets/data/cases/case_10.json');
   }
 
 }
