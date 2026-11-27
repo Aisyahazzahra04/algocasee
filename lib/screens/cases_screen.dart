@@ -121,6 +121,7 @@ class CasesScreen extends StatelessWidget {
                       CaseItem(
                         number: '01',
                         title: case01.title,
+                        difficulty: case01.difficulty,
                         status: 'AVAILABLE',
                         locked: false,
                         imagePath: 'assets/images/foto_case01.jpg',
@@ -138,6 +139,7 @@ class CasesScreen extends StatelessWidget {
                       CaseItem(
                         number: '02',
                         title: case02.title,
+                        difficulty: case02.difficulty,
                         status: 'AVAILABLE',
                         locked: false,
                         accentColor: const Color(0xFFE5A323),
@@ -155,6 +157,7 @@ class CasesScreen extends StatelessWidget {
                       CaseItem(
                       number: '03',
                       title: case03.title,
+                      difficulty: case03.difficulty,
                       status: 'AVAILABLE',
                       locked: false,
                       accentColor: const Color(0xFF8966C9),
@@ -175,6 +178,7 @@ class CasesScreen extends StatelessWidget {
                       CaseItem(
                       number: '04',
                       title: case04.title,
+                      difficulty: case04.difficulty,
                       status: 'AVAILABLE',
                       locked: false,
                       accentColor: const Color(0xFF2585C5),
@@ -194,6 +198,7 @@ class CasesScreen extends StatelessWidget {
                       CaseItem(
                         number: '05',
                         title: case05.title,
+                        difficulty: case05.difficulty,
                         status: 'AVAILABLE',
                         locked: false,
                         accentColor: const Color(0xFF14B8A6),
@@ -213,6 +218,7 @@ class CasesScreen extends StatelessWidget {
                       CaseItem(
                         number: '06',
                         title: case06.title,
+                        difficulty: case06.difficulty,
                         status: 'AVAILABLE',
                         locked: false,
                         accentColor: const Color(0xFF8966C9),
@@ -232,6 +238,7 @@ class CasesScreen extends StatelessWidget {
                       CaseItem(
                       number: '07',
                       title: case07.title,
+                      difficulty: case07.difficulty,
                       status: 'AVAILABLE',
                       locked: false,
                       accentColor: const Color(0xFFB8874A),
@@ -251,6 +258,7 @@ class CasesScreen extends StatelessWidget {
                     CaseItem(
                       number: '08',
                       title: case08.title,
+                      difficulty: case07.difficulty,
                       status: 'AVAILABLE',
                       locked: false,
                       accentColor: const Color(0xFF2585C5),
@@ -287,6 +295,7 @@ class CasesScreen extends StatelessWidget {
     final String number;
     final String title;
     final String status;
+    final String difficulty;
     final bool locked;
     final VoidCallback? onTap;
     final Color accentColor;
@@ -301,6 +310,7 @@ class CasesScreen extends StatelessWidget {
       required this.locked,
       required this.imagePath,
       required this.accentColor,
+      required this.difficulty,
       this.onTap,
     });
 
@@ -411,13 +421,17 @@ class CasesScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          locked ? 'LOCKED' : 'EASY',
+                           locked ? 'LOCKED' : difficulty.toUpperCase(),
                           style: TextStyle(
                             fontSize: 9,
                             fontWeight: FontWeight.w700,
                             color: locked
-                                ? textGrey
-                                : const Color(0xFF218653),
+                            ? textGrey
+                            : difficulty.toLowerCase() == 'medium'
+                                ? const Color(0xFFB7791F)
+                                : difficulty.toLowerCase() == 'hard'
+                                    ? const Color(0xFFD64545)
+                                    : const Color(0xFF218653),
                           ),
                         ),
                       ),
