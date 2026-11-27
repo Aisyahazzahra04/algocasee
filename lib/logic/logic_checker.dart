@@ -218,10 +218,15 @@ class LogicChecker {
               continue;
             }
 
-            // Variabel dalam kondisi harus sudah dideklarasikan
-            // dan memiliki nilai.
+            
+            final conditionWithoutText = content.replaceAll(
+              RegExp(r"""(['"])[^'"]*\1"""),
+              '',
+            );
+
             final identifiers = RegExp(r'[a-zA-Z_][a-zA-Z0-9_]*')
-                .allMatches(content);
+                .allMatches(conditionWithoutText);
+
 
             for (final match in identifiers) {
               final identifier = match.group(0)!.toLowerCase();

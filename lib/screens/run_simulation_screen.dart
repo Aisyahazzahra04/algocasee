@@ -394,7 +394,10 @@ class _RunSimulationScreenState extends State<RunSimulationScreen> {
                           const SizedBox(height: 7),
                           TextField(
                             controller: entry.value,
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            keyboardType: _testCase.input[entry.key] is String
+                                ? TextInputType.text
+                                : const TextInputType.numberWithOptions(decimal: true),
+
                             decoration: InputDecoration(
                               hintText: 'Masukkan ${entry.key}...',
                               filled: true,
@@ -438,21 +441,35 @@ class _RunSimulationScreenState extends State<RunSimulationScreen> {
     void _runSimulation(BuildContext dialogContext) {
     final manualInputValues = <dynamic>[];
 
-    // Ambil nilai input sesuai urutan input yang digunakan oleh case.
     for (final entry in _inputControllers.entries) {
-      final raw = entry.value.text.trim().replaceAll(',', '.');
-      final parsed = num.tryParse(raw);
+      final raw = entry.value.text.trim();
+      final sampleValue = _testCase.input[entry.key];
 
-      if (parsed == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Masukkan nilai ${entry.key} dengan benar.'),
-          ),
-        );
-        return;
+      if (sampleValue is String) {
+        if (raw.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Masukkan nilai ${entry.key} dengan benar.'),
+            ),
+          );
+          return;
+        }
+
+        manualInputValues.add(raw);
+      } else {
+        final parsed = num.tryParse(raw.replaceAll(',', '.'));
+
+        if (parsed == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Masukkan nilai ${entry.key} dengan benar.'),
+            ),
+          );
+          return;
+        }
+
+        manualInputValues.add(parsed);
       }
-
-      manualInputValues.add(parsed);
     }
 
     final check = LogicChecker.check(
