@@ -38,6 +38,13 @@ class CaseBriefingScreen extends StatelessWidget {
     if (text.contains('nilai')) {
       return Icons.grade_outlined;
     }
+    if (text.contains('hari')) {
+      return Icons.calendar_month_outlined;
+    }
+
+    if (text.contains('tiket')) {
+      return Icons.confirmation_number_outlined;
+    }
 
     return Icons.info_outline;
   }
@@ -444,6 +451,120 @@ class CaseBriefingScreen extends StatelessWidget {
             ),
           );
           break;
+        
+          case 'ticket':
+            visual = Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: const Color(0xFFEAF0FF),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: const Color(0xFFC9D8F5),
+                ),
+              ),
+              child: Column(
+                children: [
+                  const Icon(
+                    Icons.movie_creation_rounded,
+                    size: 38,
+                    color: Color(0xFF3B82F6),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  const Text(
+                    'HARGA TIKET BIOSKOP',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1,
+                      color: navy,
+                    ),
+                  ),
+
+                  const SizedBox(height: 5),
+
+                  const Text(
+                    'Harga berbeda berdasarkan jenis hari',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: textGrey,
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _MoneyItem(
+                          icon: Icons.confirmation_number_outlined,
+                          label: briefing.facts.isNotEmpty
+                              ? briefing.facts[0].label
+                              : 'Hari biasa',
+                          value: briefing.facts.isNotEmpty
+                              ? briefing.facts[0].value
+                              : '-',
+                        ),
+                      ),
+
+                      const SizedBox(width: 10),
+
+                      Expanded(
+                        child: _MoneyItem(
+                          icon: Icons.weekend_rounded,
+                          label: briefing.facts.length > 1
+                              ? briefing.facts[1].label
+                              : 'Akhir pekan',
+                          value: briefing.facts.length > 1
+                              ? briefing.facts[1].value
+                              : '-',
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.calendar_month_rounded,
+                          size: 17,
+                          color: Color(0xFF3B82F6),
+                        ),
+                        const SizedBox(width: 7),
+                        Flexible(
+                          child: Text(
+                            briefing.facts.length > 2
+                                ? '${briefing.facts[2].label}: ${briefing.facts[2].value}'
+                                : 'Pilih jenis hari',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              color: navy,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+            break;
+
 
       default:
         visual = Container(

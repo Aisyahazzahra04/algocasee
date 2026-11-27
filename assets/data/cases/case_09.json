@@ -1,0 +1,167 @@
+
+{
+  "id": "case_09",
+  "title": "Menentukan Biaya Pembelian Tiket",
+  "difficulty": "Medium",
+  "briefing": {
+    "description": "Sebuah bioskop menerapkan harga tiket yang berbeda berdasarkan hari pemutaran film. Harga tiket pada hari biasa lebih murah dibandingkan harga tiket pada akhir pekan. Pengunjung perlu memilih jenis hari untuk mengetahui harga tiket yang harus dibayar.",
+    "mission": "Bantu sistem bioskop menentukan harga tiket berdasarkan jenis hari pemutaran film.",
+    "visual_type": "ticket",
+    "facts": [
+      {
+        "label": "Harga tiket hari biasa",
+        "value": "Rp30.000"
+      },
+      {
+        "label": "Harga tiket akhir pekan",
+        "value": "Rp40.000"
+      },
+      {
+        "label": "Pilihan jenis hari",
+        "value": "Biasa atau Akhir Pekan"
+      }
+    ],
+    "rules": [
+      "Jenis hari dimasukkan menggunakan tipe data String.",
+      "Pengunjung hanya dapat memilih hari biasa atau akhir pekan.",
+      "Jika jenis hari adalah biasa, harga tiket sebesar Rp30.000.",
+      "Jika jenis hari adalah akhir pekan, harga tiket sebesar Rp40.000."
+    ]
+  },
+  "problem_analysis": {
+    "question": "Apa yang harus dilakukan sistem untuk menentukan harga tiket bioskop?",
+    "options": [
+      "Menghitung jumlah pengunjung yang datang.",
+      "Menentukan harga berdasarkan jenis film.",
+      "Menentukan harga tiket berdasarkan jenis hari yang dipilih.",
+      "Menghitung jumlah kursi yang tersedia."
+    ],
+    "correct_answer": 2,
+    "feedback_correct": "Benar! Sistem harus memeriksa jenis hari yang dipilih untuk menentukan harga tiket.",
+    "feedback_wrong": "Perhatikan bahwa harga tiket ditentukan berdasarkan jenis hari pemutaran film."
+  },
+  "information_identification": {
+    "question": "Informasi apa saja yang diperlukan untuk menentukan harga tiket?",
+    "information": [
+      {
+        "text": "Jenis hari pemutaran film.",
+        "relevant": true
+      },
+      {
+        "text": "Harga tiket hari biasa.",
+        "relevant": true
+      },
+      {
+        "text": "Harga tiket akhir pekan.",
+        "relevant": true
+      },
+      {
+        "text": "Warna kursi bioskop.",
+        "relevant": false
+      },
+      {
+        "text": "Judul film yang ditonton.",
+        "relevant": false
+      }
+    ]
+  },
+  "input_output_rules": {
+    "input": {
+      "question": "Data apa yang perlu dimasukkan ke dalam sistem?",
+      "options": [
+        "hargaTiket",
+        "jenisHari",
+        "jumlahKursi",
+        "judulFilm"
+      ],
+      "correct_answer": 1
+    },
+    "output": {
+      "question": "Informasi apa yang harus ditampilkan sebagai hasil akhir?",
+      "options": [
+        "Jenis film yang diputar.",
+        "Jumlah pengunjung bioskop.",
+        "Jenis hari yang dipilih.",
+        "Harga tiket yang harus dibayar."
+      ],
+      "correct_answer": 3
+    },
+    "rules": {
+      "question": "Aturan apa saja yang harus diterapkan untuk menentukan harga tiket?",
+      "options": [
+        "Jika jenis hari adalah biasa, harga tiket Rp30.000.",
+        "Menentukan harga berdasarkan judul film.",
+        "Jika jenis hari adalah akhir pekan, harga tiket Rp40.000.",
+        "Jenis hari dimasukkan menggunakan tipe data String."
+      ],
+      "correct_answers": [0, 2, 3]
+    }
+  },
+  "logic_builder": {
+    "available_blocks": [
+      "START",
+      "DECLARE",
+      "INPUT",
+      "PROCESS",
+      "DECISION",
+      "TRUE",
+      "FALSE",
+      "END_DECISION",
+      "OUTPUT",
+      "END"
+    ],
+    "variables": [
+      {
+        "name": "jenisHari",
+        "type": "String",
+        "role": "input"
+      },
+      {
+        "name": "hargaTiket",
+        "type": "Integer",
+        "role": "output"
+      }
+    ],
+    "input_order": [
+      "jenisHari"
+    ],
+    "expected_logic": [
+      "START",
+      "DECLARE jenisHari : String",
+      "DECLARE hargaTiket : Integer",
+      "INPUT jenisHari",
+      "DECISION jenisHari == \"biasa\"",
+      "TRUE:",
+      "PROCESS hargaTiket = 30000",
+      "FALSE:",
+      "PROCESS hargaTiket = 40000",
+      "END_DECISION",
+      "OUTPUT hargaTiket",
+      "END"
+    ]
+  },
+  "test_cases": [
+    {
+      "input": {
+        "jenisHari": "biasa"
+      },
+      "expected_result": 30000
+    },
+    {
+      "input": {
+        "jenisHari": "akhir pekan"
+      },
+      "expected_result": 40000
+    },
+    {
+      "input": {
+        "jenisHari": "biasa"
+      },
+      "expected_result": 30000
+    }
+  ],
+  "feedback": {
+    "correct": "Hebat! Kamu berhasil menentukan harga tiket berdasarkan jenis hari menggunakan tipe data String dan percabangan IF ELSE.",
+    "wrong": "Belum tepat. Periksa kembali kondisi jenis hari dan harga tiket yang sesuai."
+  }
+}
