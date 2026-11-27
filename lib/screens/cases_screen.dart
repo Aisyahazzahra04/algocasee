@@ -30,7 +30,7 @@ class CasesScreen extends StatelessWidget {
       // KONTEN HALAMAN CASES
       SafeArea(
         child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -112,6 +112,11 @@ class CasesScreen extends StatelessWidget {
                   final case07 = snapshot.data![6];
                   final case08 = snapshot.data![7];
                   return ListView(
+                      padding: const EdgeInsets.only(
+                        top: 0,
+                        bottom: 16,
+                      ),
+                      physics: const BouncingScrollPhysics(),
                     children: [
                       CaseItem(
                         number: '01',
